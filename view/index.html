@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="centered-form ">
+        <form id="form">
+            <div class="hero">
+                <img src="../resoures/smega 1.png"/>
+                <h2>Smega Customer Statement</h2>
+            
+            </div>
+              
+            <div class="centered-inputs"> 
+              
+              
+                <div>
+                    <label  for="phone">PHONE</label>
+                    <input class="phoneInput" type="tel" id="phone" name="phone">
+                </div>
+                <div class="date-picker-container">
+                    <label class="date-picker-label" for="date">PERIOD</label>
+                    <input class="dateInput" type="date" name="date1" id="date1">
+                    <input class="dateInput" type="date" name="date2" id="date2">
+                </div>
+                <div class="centered-buttons">
+                    <button  class="formButton getButton"  type="button" id="getButton">Get</button>
+                    <div class="spinner" id="spinner"></div>
+                    <button class="formButton" type="button" id="downloadButton">Download</button>
+    
+                
+
+                </div>
+            </div>
+        
+    </form>
+    </div>
+    
+</body>
+<script type="module" src="./services/process_statement.js"></script>
+</html>
