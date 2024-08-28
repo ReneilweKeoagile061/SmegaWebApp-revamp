@@ -1,4 +1,3 @@
-import mysql from 'mysql2/promise';
 import OracleDB from 'oracledb';
 import {config} from '../config.js';
 

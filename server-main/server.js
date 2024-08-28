@@ -1,9 +1,11 @@
 import express, { json } from 'express';
-import * as smegRouter from './protected_routes/smega_statement_route.js';
+import * as smegRoute from './protected_routes/smega_statement_route.js';
+import * as loginRoute from './routes/login_route.js';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { config } from 'dotenv';
+import cookieParser from 'cookie-parser'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,7 +22,10 @@ app.use(
   })
 );
 
-app.use("/smega_statement", smegRouter.router);
+app.use(cookieParser());
+
+app.use("/smega_statement", smegRoute.router);
+app.use("/login",loginRoute.router)
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

@@ -5,5 +5,7 @@ const router = express.Router();
 
 router.post("/user",smegaController.getUserStatment);
 
+router.get("/home",smegaController.renderHome);
+
 
 export {router}

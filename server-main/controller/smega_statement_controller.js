@@ -1,4 +1,11 @@
 import {  processQuery } from "../services/smega_service.js"
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const getUserStatment = async(req,res,next) => {
     const {inputField1Value,datePicker1Value,datePicker2Value } = req.body;
@@ -19,8 +26,14 @@ const getUserStatment = async(req,res,next) => {
 
 }
 
+const renderHome=async(req,res,next) => {
 
+
+    const homePagePath = path.join(__dirname, '../view/pages/home.html');
+    res.sendFile(homePagePath)
+}
 
 export {
-    getUserStatment
+    getUserStatment,
+    renderHome
 }
