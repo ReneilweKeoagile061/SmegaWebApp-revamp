@@ -4,6 +4,7 @@ import * as ldapController from '../controller/ldap_controller.js'
 
 const router = express.Router();
 
-router.post("/",ldapController.login)
+router.post("/login",ldapController.login);
+router.post("/logout",ldapController.logout);
 
-export {router}
+export {router} 

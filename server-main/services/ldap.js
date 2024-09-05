@@ -3,8 +3,8 @@ import qs from 'qs';
 import jwt from 'jsonwebtoken';
 
 export const auth = async (email, password) => {
-     if (email && password) {
-         const data = qs.stringify({
+    if (email && password) {
+        const data = qs.stringify({
             'client_id': process.env.CLIENT_ID || 'btc-ad_client',
             'username': email,
             'password': password,
@@ -17,8 +17,8 @@ export const auth = async (email, password) => {
             method: 'post',
             maxBodyLength: Infinity,
             url: process.env.AUTH_URL || 'https://keycloak-sso-system.services.btc.bw/auth/realms/btc_staff/protocol/openid-connect/token',
-            headers: { 
-                'Content-Type': 'application/x-www-form-urlencoded', 
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'Cookie': process.env.COOKIE || '3ef88a617efab92ffb28f2972e7d264d=90685909102409f035b1fa89a0185afd'
             },
             data: data
@@ -59,18 +59,27 @@ export const auth = async (email, password) => {
             const token = response.data.access_token;
             //console.log("Received token:", token)
             //console.log(data);
-           const result =validateToken(token);
+            const result = validateToken(token);
 
-          return result
-            
+            if (result && result.state === true) {
+                result['token'] = token;
+                // Store token in a cookie
+
+                return result
+
+            }
+
+
         } catch (error) {
             console.error("Error during authentication", error.message);
-            const result2={}
+            const result2 = {}
             result2['state'] = false;
             result2['message'] = "Error during authentication";
             return result2;
         }
     }
 
-    
 }
+
+
+

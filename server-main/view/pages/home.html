@@ -11,11 +11,14 @@
     <nav class="navbar">
         <div class="nav-links">
             <a href="#">Home</a>
-            <a href="#">Services</a>
+            <!-- <a href="#">Services</a>
             <a href="#">About</a>
-            <a href="#">Contact</a>
+            <a href="#">Contact</a> -->
         </div>
-        <button class="logout-btn">Logout</button>
+        <form action="/auth/logout" method="post">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+       
     </nav>
 
     <h1 class="welcome-message">Welcome, <span id="userName">User</span></h1>
@@ -31,7 +34,7 @@
                 <div class="centered-inputs"> 
                     <div>
                         <label for="phone">PHONE</label>
-                        <input class="phoneInput" type="tel" id="phone" name="phone">
+                        <input class="phoneInput" type="tel" id="phone" name="phone" pattern="[0-9]{8}" maxlength="8" required>
                     </div>
                     <div class="date-picker-container">
                         <label class="date-picker-label" for="date">PERIOD</label>
@@ -73,5 +76,16 @@
             }
         }
     </script>
+    <script>
+        document.getElementById('phone').addEventListener('input', function (e) {
+            let inputValue = e.target.value;
+            if (inputValue.length > 8) {
+                e.target.value = inputValue.slice(0, 8); // Trim the input to 8 characters
+            }
+        });
+    </script>
+    
+ 
+    
 </body>
 </html>
