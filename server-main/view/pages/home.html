@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles/home.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <!-- <a href="#">Services</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a> -->
+        </div>
+        <form action="/auth/logout" method="post">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+       
+    </nav>
+
+    <h1 class="welcome-message">Welcome, <span id="userName">User</span></h1>
+
+    <div class="main-content">
+        <div class="centered-form">
+            <form id="form">
+                <div class="hero">
+                    <img src="../resoures/smega 1.png" alt="Smega Logo"/>
+                    <h2>Smega Customer Statement</h2>
+                </div>
+                
+                <div class="centered-inputs"> 
+                    <div>
+                        <label for="phone">PHONE</label>
+                        <input class="phoneInput" type="tel" id="phone" name="phone" pattern="[0-9]{8}" maxlength="8" required>
+                    </div>
+                    <div class="date-picker-container">
+                        <label class="date-picker-label" for="date">PERIOD</label>
+                        <input class="dateInput" type="date" name="date1" id="date1">
+                        <input class="dateInput" type="date" name="date2" id="date2">
+                    </div>
+                    <div class="centered-buttons">
+                        <button class="formButton getButton" type="button" id="getButton">Get</button>
+                        <div class="spinner" id="spinner"></div>
+                        <button class="formButton" type="button" id="downloadButton">Download</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script type="module" src="../services/process_statement.js"></script>
+    <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    
+        window.onload = function() {
+            const loginSuccess = getCookie('loginSuccess');
+            console.log(loginSuccess) 
+            if (loginSuccess) {
+                const decodedString = decodeURIComponent(loginSuccess);
+                const userData = JSON.parse(decodedString); // Deserialize the JSON string
+                console.log(userData)
+                if (userData.state === true) {
+                    const userNameElement = document.getElementById('userName');
+                    const userName = userData.name; // Extract the name from the deserialized object
+                    userNameElement.textContent = userName; // Set the name in the HTML element
+                }
+                // Clear the cookie
+                document.cookie = 'loginSuccess=; Max-Age=0; path=/;';
+            }
+        }
+    </script>
+    <script>
+        document.getElementById('phone').addEventListener('input', function (e) {
+            let inputValue = e.target.value;
+            if (inputValue.length > 8) {
+                e.target.value = inputValue.slice(0, 8); // Trim the input to 8 characters
+            }
+        });
+    </script>
+    
+ 
+    
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/index.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="../resoures/smega 1.png" alt="Logo">
+        </div>
+        <div class="left-side">
+            <h1>Smega Statement <br>Portal</h1>
+        </div>
+        <div class="right-side">
+            <div class="login-form">
+                <h2>Login</h2>
+                <form action="/auth/login" method="post">
+                    <input type="email" placeholder="Email" id="email" name="email" required>
+                    <input type="password" placeholder="Password" id="password" name="password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Snackbar element -->
+    <div id="snackbar">Invalid email or password. Please try again.</div>
+
+    <script>
+        function showSnackbar(message) {
+            var snackbar = document.getElementById("snackbar");
+            snackbar.textContent = message; // Set the message in the snackbar
+            snackbar.className = "show";
+            setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+        }
+    
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    
+        window.onload = function() {
+            const loginError = getCookie('loginError');
+            if (loginError) {
+                const decodedString = decodeURIComponent(loginError);
+                const errorData = JSON.parse(decodedString); // Deserialize the JSON string
+                if (errorData.state === false) {
+                    showSnackbar(errorData.message); // Show the message from the serialized object
+                }
+                // Clear the cookie
+                document.cookie = 'loginError=; Max-Age=0; path=/;';
+            }
+        }
+    </script>
+</body>
+
+<!-- Import the module -->
+
+   
+</script>
+
+</html>
