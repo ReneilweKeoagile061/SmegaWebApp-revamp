@@ -57,12 +57,13 @@ export const auth = async (email, password) => {
         try {
             const response = await axios.request(config);
             const token = response.data.access_token;
-            
+            //console.log("Received token:", token)
+            //console.log(data);
             const result = validateToken(token);
 
             if (result && result.state === true) {
                 result['token'] = token;
-                
+                // Store token in a cookie
 
                 return result
 
