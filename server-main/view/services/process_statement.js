@@ -21,7 +21,7 @@ document.getElementById('getButton').addEventListener('click', async () => {
         };
 
         try {
-            const response = await axios.post("http://localhost:3600/smega_statement/user", payload);
+            const response = await axios.post("http://localhost:3400/smega_statement/user", payload);
             console.log(response);
             document.getElementById("spinner").style.display = "none";
             document.getElementById("downloadButton").style.display = "block";
