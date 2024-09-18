@@ -76,14 +76,26 @@
             }
         }
     </script>
-    <script>
-        document.getElementById('phone').addEventListener('input', function (e) {
-            let inputValue = e.target.value;
-            if (inputValue.length > 8) {
-                e.target.value = inputValue.slice(0, 8); // Trim the input to 8 characters
-            }
-        });
-    </script>
+ <script>
+    document.getElementById('phone').addEventListener('input', function (e) {
+        let inputValue = e.target.value;
+
+        // Remove non-numeric characters
+        let numericValue = inputValue.replace(/\D/g, '');
+
+        // Ensure the input starts with "7"
+        if (!numericValue.startsWith('7')) {
+            numericValue = '7' + numericValue.replace(/^7/, '');
+        }
+
+        // Limit to 8 characters in total
+        if (numericValue.length > 8) {
+            numericValue = numericValue.slice(0, 8);
+        }
+
+        e.target.value = numericValue;
+    });
+</script>
     
  
     

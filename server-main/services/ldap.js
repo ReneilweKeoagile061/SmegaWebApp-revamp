@@ -74,7 +74,7 @@ export const auth = async (email, password) => {
             console.error("Error during authentication", error.message);
             const result2 = {}
             result2['state'] = false;
-            result2['message'] = "Error during authentication";
+            result2['message'] = "Invalid User Name and Password";
             return result2;
         }
     }
