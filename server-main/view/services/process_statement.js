@@ -11,9 +11,12 @@ document.getElementById('getButton').addEventListener('click', async () => {
     const datePicker1Value = document.getElementById('date1').value;
     const datePicker2Value = document.getElementById('date2').value;
     const spinner = document.getElementById('spinner');
+    const downloadButton = document.getElementById('downloadButton');
+    const message = document.getElementById('message');
 
-    // Hide the spinner initially
+    // Hide the spinner and message initially
     spinner.style.display = 'none';
+    message.style.display = 'none';
 
     // Check if all fields are provided
     if (!inputField1Value && (!datePicker1Value || !datePicker2Value)) {
@@ -35,7 +38,8 @@ document.getElementById('getButton').addEventListener('click', async () => {
 
     // Show spinner and proceed with fetching data
     spinner.style.display = 'block';
-    document.getElementById("downloadButton").style.display = "none";
+    downloadButton.style.display = 'none';
+    message.style.display = 'none';
 
     const payload = {
         inputField1Value,
@@ -45,22 +49,33 @@ document.getElementById('getButton').addEventListener('click', async () => {
 
     try {
         const response = await axios.post("/smega_statement/user", payload);
-        console.log(response);
-        document.getElementById("spinner").style.display = "none";
-        document.getElementById("downloadButton").style.display = "block";
+        const data = response.data;
+
+        // Check if data is empty
+        if (!data || data.length === 0) {
+            message.textContent = 'No transaction found';
+            message.style.display = 'block';
+            spinner.style.display = 'none';
+            return;
+        }
 
         // Preload XLSX library and prepare data
         XLSX = await import("https://cdn.sheetjs.com/xlsx-0.19.2/package/xlsx.mjs");
-        preparedData = await jsonToExcel(response.data, XLSX);
+        preparedData = await jsonToExcel(data, XLSX);
 
-        document.getElementById("downloadButton").addEventListener('click', () => {
+        downloadButton.style.display = "block";
+
+        downloadButton.addEventListener('click', () => {
             if (preparedData) {
                 downloadExcel(preparedData);
             }
         });
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById("spinner").style.display = "none";
+        message.textContent = 'An error occurred while processing your request.';
+        message.style.display = 'block';
+    } finally {
+        spinner.style.display = 'none';
     }
 });
 

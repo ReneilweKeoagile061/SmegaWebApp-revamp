@@ -18,10 +18,9 @@
         <form action="/auth/logout" method="post">
             <button type="submit" class="logout-btn">Logout</button>
         </form>
-       
     </nav>
 
-    <h1 class="welcome-message">Welcome, <span id="userName">User</span></h1>
+    <h1 class="welcome-message">Welcome <span id="userName">User</span></h1>
 
     <div class="main-content">
         <div class="centered-form">
@@ -43,29 +42,29 @@
                     </div>
                     <div class="centered-buttons">
                         <button class="formButton getButton" type="button" id="getButton">SEARCH</button>
-                        <div class="spinner" id="spinner"></div>
+                        <div class="spinner" id="spinner" style="display: none;"></div>
+                        <div id="message" style="display: none; color: red;"></div>
                         <button class="formButton" type="button" id="downloadButton">Download</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    
+
     <script type="module" src="../services/process_statement.js"></script>
+
     <script>
         function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
+            const value = document.cookie;
+            const parts = value.split('; ' + name + '=');
             if (parts.length === 2) return parts.pop().split(';').shift();
         }
     
         window.onload = function() {
             const loginSuccess = getCookie('loginSuccess');
-            console.log(loginSuccess) 
             if (loginSuccess) {
                 const decodedString = decodeURIComponent(loginSuccess);
                 const userData = JSON.parse(decodedString); // Deserialize the JSON string
-                console.log(userData)
                 if (userData.state === true) {
                     const userNameElement = document.getElementById('userName');
                     const userName = userData.name; // Extract the name from the deserialized object
@@ -76,28 +75,26 @@
             }
         }
     </script>
- <script>
-    document.getElementById('phone').addEventListener('input', function (e) {
-        let inputValue = e.target.value;
 
-        // Remove non-numeric characters
-        let numericValue = inputValue.replace(/\D/g, '');
+    <script>
+        document.getElementById('phone').addEventListener('input', function (e) {
+            let inputValue = e.target.value;
 
-        // Ensure the input starts with "7"
-        if (!numericValue.startsWith('7')) {
-            numericValue = '7' + numericValue.replace(/^7/, '');
-        }
+            // Remove non-numeric characters
+            let numericValue = inputValue.replace(/\D/g, '');
 
-        // Limit to 8 characters in total
-        if (numericValue.length > 8) {
-            numericValue = numericValue.slice(0, 8);
-        }
+            // Ensure the input starts with "7"
+            if (!numericValue.startsWith('7')) {
+                numericValue = '7' + numericValue.replace(/^7/, '');
+            }
 
-        e.target.value = numericValue;
-    });
-</script>
-    
- 
-    
+            // Limit to 8 characters in total
+            if (numericValue.length > 8) {
+                numericValue = numericValue.slice(0, 8);
+            }
+
+            e.target.value = numericValue;
+        });
+    </script>
 </body>
 </html>
