@@ -83,7 +83,10 @@ function downloadExcel(blob) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = "Smega_Statement.xlsx";
+    
+    // Set the filename to include the MSISDN
+    const msisdn = document.getElementById('phone').value;
+    link.download = `Smega_Statement_${msisdn}.xlsx`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
