@@ -22,7 +22,7 @@ const processQuery = async(params) => {
     FROM 
     summary_smega.partitioned_hist_mx_transaction_items_smega
     WHERE 
-        customer_contact = '${params.inputField1Value}'
+        customer_contact = ${params.inputField1Value}
     AND transaction_date BETWEEN TO_DATE('${params.datePicker1Value}') 
     AND TO_DATE('${params.datePicker2Value}')
 `;
