@@ -1,5 +1,6 @@
 import hive from "hive-driver";
 import { config } from "dotenv";
+import axios from 'axios';
 
 config();
 
@@ -7,7 +8,7 @@ const { TCLIService, TCLIService_types } = hive.thrift;
 const client = new hive.HiveClient(TCLIService, TCLIService_types);
 const utils = new hive.HiveUtils(TCLIService_types);
 
-const getSmegaStatement = async (query) => {
+/*const getSmegaStatement = async (query) => {
     try {
         await client.connect(
             {
@@ -19,7 +20,19 @@ const getSmegaStatement = async (query) => {
                 username: process.env.HiveUsername,
                 password: process.env.HivePassword
             })
-        );
+        );*/
+
+
+const getSmegaStatement = async (query) => {
+    try {
+        const response = await axios.post('http://localhost:5000/query', { query });
+        return response.data;
+    } catch (err) {
+        console.error("Error calling Python Hive service:", err.message);
+        throw err;
+    }
+};
+                
 
         const session = await client.openSession({
             client_protocol: TCLIService_types.TProtocolVersion.HIVE_CLI_SERVICE_PROTOCOL_V10
