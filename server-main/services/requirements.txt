@@ -1,5 +1,0 @@
-Flask
-pyhive[kerberos]
-thrift_sasl
-sasl
-python-dotenv
