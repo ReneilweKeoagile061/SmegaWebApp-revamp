@@ -18,18 +18,29 @@ const getSmegaStatement = async (query) => {
         execSync(`kinit -kt ${keytabPath} ${principal}`);
         console.log("kinit successful");
 
-        // Step 2: Connect to Hive using existing Kerberos ticket
+        // Step 2: Parse and validate port
+        const port = parseInt(process.env.HIVE_PORT);
+        if (isNaN(port) || port < 0 || port > 65535) {
+            throw new Error(`Invalid HIVE_PORT: ${process.env.HIVE_PORT}`);
+        }
+        console.log(`Connecting to Hive on ${process.env.HIVE_HOST}:${port}`);
+
+        // Step 3: Connect to Hive with Kerberos
         await client.connect(
             {
                 host: process.env.HIVE_HOST,
-                port: parseInt(process.env.HIVE_PORT),
+                port,
                 options: {
                     principal,
                     kerberosServiceName: 'hive',
                     timeout: parseInt(process.env.CONNECTION_TIMEOUT),
                 }
             },
-            new hive.connections.TcpConnection() // No Kerberos auth object here
+            new hive.connections.TcpConnection(),
+            new hive.auth.KerberosTcpAuthentication({
+                keytabFile: keytabPath,
+                principal,
+            })
         );
 
         const session = await client.openSession({
