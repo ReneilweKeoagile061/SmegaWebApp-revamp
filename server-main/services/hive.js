@@ -18,7 +18,7 @@ const getSmegaStatement = async (query) => {
         execSync(`kinit -kt ${keytabPath} ${principal}`);
         console.log("kinit successful");
 
-        // Step 2: Connect to Hive with kerberos
+        // Step 2: Connect to Hive using existing Kerberos ticket
         await client.connect(
             {
                 host: process.env.HIVE_HOST,
@@ -29,11 +29,7 @@ const getSmegaStatement = async (query) => {
                     timeout: parseInt(process.env.CONNECTION_TIMEOUT),
                 }
             },
-            new hive.connections.TcpConnection(),
-            new hive.auth.KerberosTcpAuthentication({
-                keytabFile: keytabPath,
-                principal,
-            })
+            new hive.connections.TcpConnection() // No Kerberos auth object here
         );
 
         const session = await client.openSession({
