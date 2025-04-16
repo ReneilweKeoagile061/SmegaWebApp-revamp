@@ -15,7 +15,7 @@ const getSmegaStatement = async (query) => {
         const principal = process.env.PRINCIPAL;
 
         console.log("Running kinit...");
-        execSync(`kinit -kt ${keytabPath} ${principal}`);
+        execSync(`sudo kinit -kt ${keytabPath} ${principal}`);
         console.log("kinit successful");
 
         // Step 2: Connect to Hive with kerberos
