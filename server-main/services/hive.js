@@ -1,8 +1,15 @@
 import hive from "hive-driver";
 import { config } from "dotenv";
 import { execSync } from "child_process";
+import kerberos from 'kerberos';
 
 config();
+
+// Patch 'init' to point to the correct function if missing
+if (!kerberos.init && kerberos.initializeClient) {
+    kerberos.init = kerberos.initializeClient;
+}
+
 
 const { TCLIService, TCLIService_types } = hive.thrift;
 const client = new hive.HiveClient(TCLIService, TCLIService_types);
