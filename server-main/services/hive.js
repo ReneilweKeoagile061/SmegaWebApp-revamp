@@ -5,10 +5,17 @@ import kerberos from 'kerberos';
 
 config();
 
-// Patch 'init' to point to the correct function if missing
-if (!kerberos.init && kerberos.initializeClient) {
-    kerberos.init = kerberos.initializeClient;
-}
+if (!kerberos || typeof kerberos !== 'object') {
+    console.error('Kerberos module not properly loaded');
+  } else if (!kerberos.init) {
+    if (kerberos.initializeClient) {
+      console.log('Patching kerberos.init with initializeClient');
+      kerberos.init = kerberos.initializeClient;
+    } else {
+      console.error('Neither init nor initializeClient methods found in kerberos module');
+      console.log('Available methods:', Object.keys(kerberos));
+    }
+  }
 
 
 const { TCLIService, TCLIService_types } = hive.thrift;
