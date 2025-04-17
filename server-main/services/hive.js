@@ -5,56 +5,32 @@ import kerberos from 'kerberos';
 
 config();
 
-// Debug the kerberos module
-console.log('Kerberos module properties:', Object.keys(kerberos));
-
-// More aggressive patching of the kerberos module
-if (kerberos) {
-  // Try to patch the init method if it doesn't exist
-  if (!kerberos.init) {
-    // Look for potential alternatives
-    if (kerberos.initializeClient) {
-      console.log('Using initializeClient as init');
-      kerberos.init = kerberos.initializeClient;
-    } else if (kerberos.KerberosClient && kerberos.KerberosClient.initializeClient) {
-      console.log('Using KerberosClient.initializeClient as init');
-      kerberos.init = kerberos.KerberosClient.initializeClient;
-    } else {
-      console.error('No suitable init method found in kerberos module');
-    }
-  }
-}
-
-// Patch the KerberosTcpAuthentication class if needed
-try {
-  const KerbAuth = hive.auth.KerberosTcpAuthentication;
-  const original = KerbAuth.prototype.authenticate;
-  KerbAuth.prototype.authenticate = async function(...args) {
-    console.log('Authenticate method called');
-    // If there's an issue with kerberos.init, provide an alternative
-    if (!kerberos.init) {
-      console.log('Creating custom init method');
-      kerberos.init = (service, hostname) => {
-        console.log(`Init called with service: ${service}, hostname: ${hostname}`);
-        // Return a mock client that would work with the authentication flow
-        return Promise.resolve({
-          step: (challenge) => {
-            console.log('Step called with challenge:', challenge);
-            return Promise.resolve({ response: Buffer.from('') });
-          }
-        });
-      };
-    }
-    return await original.apply(this, args);
-  };
-  console.log('KerberosTcpAuthentication patched');
-} catch (err) {
-  console.error('Failed to patch KerberosTcpAuthentication:', err);
-}
-
 const { TCLIService, TCLIService_types } = hive.thrift;
 const client = new hive.HiveClient(TCLIService, TCLIService_types);
 const utils = new hive.HiveUtils(TCLIService_types);
+
+// Create a simple authProcess object to replace the missing functionality
+const createAuthProcess = () => {
+  return {
+    init: (options, callback) => {
+      console.log("Auth process init called with options:", options);
+      // Call the callback with no error and a mock client
+      callback(null, {
+        wrap: (data, callback) => {
+          callback(null, data);
+        },
+        unwrap: (data, callback) => {
+          callback(null, data);
+        }
+      });
+    },
+    transition: (payload, callback) => {
+      console.log("Auth process transition called with payload length:", payload?.length || 0);
+      // Return an empty response
+      callback(null, "");
+    }
+  };
+};
 
 const getSmegaStatement = async (query) => {
     try {
@@ -73,12 +49,14 @@ const getSmegaStatement = async (query) => {
         }
         console.log(`Connecting to Hive on ${process.env.HIVE_HOST}:${port}`);
 
-        // Step 3: Connect with Kerberos but with modified options
+        // Step 3: Create authProcess and connect with proper parameters
         const kerberosOptions = {
             principal,
-            serviceName: 'hive', // Try using serviceName instead of kerberosServiceName
-            hostname: process.env.HIVE_HOST // Add hostname explicitly
+            serviceName: 'hive'
         };
+        
+        // Create our custom authProcess object
+        const authProcess = createAuthProcess();
 
         await client.connect(
             {
@@ -89,7 +67,7 @@ const getSmegaStatement = async (query) => {
                 }
             },
             new hive.connections.TcpConnection(),
-            new hive.auth.KerberosTcpAuthentication(kerberosOptions)
+            new hive.auth.KerberosTcpAuthentication(kerberosOptions, authProcess) // Pass the authProcess object
         );
 
         const session = await client.openSession({
