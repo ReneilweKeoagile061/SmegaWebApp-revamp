@@ -1,7 +1,6 @@
 import hive from "hive-driver";
+import kerberos from "kerberos";
 import { config } from "dotenv";
-
-// Load environment variables
 config();
 
 const {
@@ -18,55 +17,45 @@ const utils = new hive.HiveUtils(TCLIService_types);
 
 const getSmegaStatement = async (query) => {
   try {
-    // Log the authentication info being used
     console.log("🔐 Using Kerberos authentication:");
     console.log(`   Principal: ${PRINCIPAL}`);
     console.log(`   Keytab:    ${KEYTAB_HOME}`);
 
-    // Create a new instance of KerberosTcpAuthentication and handle authentication
-    const kerberosAuth = new hive.auth.KerberosTcpAuthentication({
-      principal: PRINCIPAL,
-      keytabFile: KEYTAB_HOME,
-    });
+    const kerberosClient = new kerberos.KerberosClient();
 
-    // Initialize the Kerberos authentication process explicitly
-    const authProcess = kerberosAuth.authenticate;
-    if (typeof authProcess !== "function") {
-      console.error("❌ Authentication process not found or incorrect.");
-      throw new Error("Authentication process not found.");
-    }
-
-    // Connect to Hive using Kerberos
     await client.connect(
       {
         host: HIVE_HOST,
         port: parseInt(HIVE_PORT),
         options: {
           principal: PRINCIPAL,
-          timeout: parseInt(CONNECTION_TIMEOUT),
-        },
+          kerberosServiceName: "hive",
+          timeout: parseInt(CONNECTION_TIMEOUT)
+        }
       },
       new hive.connections.TcpConnection(),
-      kerberosAuth // Use the authentication instance
+      new hive.auth.KerberosTcpAuthentication(
+        {
+          username: PRINCIPAL,
+          password: "", // Not used with keytab
+        },
+        kerberosClient
+      )
     );
 
     console.log("✅ Kerberos authentication successful. Connected to Hive.");
 
-    // Open session
     const session = await client.openSession({
-      client_protocol: TCLIService_types.TProtocolVersion.HIVE_CLI_SERVICE_PROTOCOL_V10,
+      client_protocol: TCLIService_types.TProtocolVersion.HIVE_CLI_SERVICE_PROTOCOL_V10
     });
 
     console.log("📡 Hive session opened. Executing query...");
 
-    // Execute query
     const operation = await session.executeStatement(query);
     await utils.waitUntilReady(operation, false, () => {});
-
     const selectDataOperation = await utils.fetchAll(operation);
     const results = utils.getResult(selectDataOperation).getValue();
 
-    // Cleanup
     await operation.close();
     await session.close();
 
