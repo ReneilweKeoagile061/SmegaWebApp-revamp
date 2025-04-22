@@ -1,21 +1,22 @@
 import hive from 'hive-driver';
 
-const { TCLIService, HiveClient, auth } = hive;
+const { TCLIService, HiveClient } = hive;
+const auth = hive.auth; // fallback for CommonJS-style access
 
 const client = new HiveClient(TCLIService);
 
 async function connectToHive() {
   try {
-    const connection = auth.createKerberosTcpConnection({
+    const connection = auth({
       host: '10.128.200.51',
       port: 10000,
-      service: 'hive',
-      principal: 'prodbi@CORP.BTC.BW',
-      timeout: 300000
+      options: {
+        principal: 'prodbi@CORP.BTC.BW',
+        service: 'hive'
+      }
     });
 
     const session = await client.connect(connection, {});
-
     console.log('✅ Connected to Hive via Kerberos.');
 
     const result = await session.executeStatement('SELECT current_date');
