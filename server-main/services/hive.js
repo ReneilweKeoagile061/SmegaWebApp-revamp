@@ -1,5 +1,4 @@
 import hive from "hive-driver";
-import kerberos from "kerberos";
 import { config } from "dotenv";
 config();
 
@@ -21,26 +20,21 @@ const getSmegaStatement = async (query) => {
     console.log(`   Principal: ${PRINCIPAL}`);
     console.log(`   Keytab:    ${KEYTAB_HOME}`);
 
-    const kerberosClient = new kerberos.KerberosClient();
-
     await client.connect(
       {
         host: HIVE_HOST,
         port: parseInt(HIVE_PORT),
         options: {
           principal: PRINCIPAL,
-          kerberosServiceName: "hive",
+          kerberosServiceName: 'hive',
           timeout: parseInt(CONNECTION_TIMEOUT)
         }
       },
       new hive.connections.TcpConnection(),
-      new hive.auth.KerberosTcpAuthentication(
-        {
-          username: PRINCIPAL,
-          password: "", // Not used with keytab
-        },
-        kerberosClient
-      )
+      new hive.auth.KerberosTcpAuthentication({
+        principal: PRINCIPAL,
+        keytabFile: KEYTAB_HOME
+      })
     );
 
     console.log("✅ Kerberos authentication successful. Connected to Hive.");
