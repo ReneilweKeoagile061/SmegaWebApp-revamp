@@ -23,28 +23,38 @@ const getSmegaStatement = async (query) => {
     console.log(`   Principal: ${PRINCIPAL}`);
     console.log(`   Keytab:    ${KEYTAB_HOME}`);
 
-    // Connect to Hive using Kerberos with user principal
+    // Create a new instance of KerberosTcpAuthentication and handle authentication
+    const kerberosAuth = new hive.auth.KerberosTcpAuthentication({
+      principal: PRINCIPAL,
+      keytabFile: KEYTAB_HOME,
+    });
+
+    // Initialize the Kerberos authentication process explicitly
+    const authProcess = kerberosAuth.authenticate;
+    if (typeof authProcess !== "function") {
+      console.error("❌ Authentication process not found or incorrect.");
+      throw new Error("Authentication process not found.");
+    }
+
+    // Connect to Hive using Kerberos
     await client.connect(
       {
         host: HIVE_HOST,
         port: parseInt(HIVE_PORT),
         options: {
           principal: PRINCIPAL,
-          timeout: parseInt(CONNECTION_TIMEOUT)
-        }
+          timeout: parseInt(CONNECTION_TIMEOUT),
+        },
       },
       new hive.connections.TcpConnection(),
-      new hive.auth.KerberosTcpAuthentication({
-        principal: PRINCIPAL,
-        keytabFile: KEYTAB_HOME
-      })
+      kerberosAuth // Use the authentication instance
     );
 
     console.log("✅ Kerberos authentication successful. Connected to Hive.");
 
     // Open session
     const session = await client.openSession({
-      client_protocol: TCLIService_types.TProtocolVersion.HIVE_CLI_SERVICE_PROTOCOL_V10
+      client_protocol: TCLIService_types.TProtocolVersion.HIVE_CLI_SERVICE_PROTOCOL_V10,
     });
 
     console.log("📡 Hive session opened. Executing query...");
