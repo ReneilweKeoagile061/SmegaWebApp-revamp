@@ -1,5 +1,6 @@
-// controller/tet.js
-import { TCLIService, HiveClient, HiveUtils, auth } from 'hive-driver';
+import hiveDriver from 'hive-driver';
+
+const { TCLIService, HiveClient, HiveUtils, auth } = hiveDriver;
 
 const client = new HiveClient(TCLIService);
 
