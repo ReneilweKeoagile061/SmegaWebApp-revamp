@@ -9,8 +9,12 @@ const client = new HiveClient(TCLIService);
 // Function to authenticate using Kerberos and connect to Hive
 async function connectToHive() {
   try {
-    // Perform Kerberos authentication using the keytab
-    kerberos.kinit('prodbi@CORP.BTC.BW', '/home/smegaweb/prodbi.keytab', (err) => {
+    // Authenticate using kerberos (kinit equivalent)
+    kerberos.auth.authenticate({
+      principal: 'prodbi@CORP.BTC.BW',
+      keytab: '/home/smegaweb/prodbi.keytab',
+      service: 'hive'
+    }, (err) => {
       if (err) {
         console.error('❌ Kerberos Authentication Failed:', err);
         return;
