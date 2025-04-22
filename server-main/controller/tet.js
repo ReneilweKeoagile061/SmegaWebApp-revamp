@@ -1,23 +1,22 @@
 import hive from 'hive-driver';
 
-const { TCLIService, HiveClient } = hive;
+const { HiveClient } = hive;
 
-const client = new HiveClient(TCLIService);
+const client = new HiveClient();
 
 async function connectToHive() {
   try {
-    const connection = client.connect({
+    const connection = await client.connect({
       host: '10.128.200.51',
       port: 10000,
       options: {
-        // This tells hive-driver to use Kerberos ticket from the cache
         auth: 'KERBEROS',
-        krbServiceName: 'hive', // This matches Hive server config (usually 'hive')
-        principal: 'prodbi@CORP.BTC.BW', // Must match your Kerberos principal
+        krbServiceName: 'hive',
+        principal: 'prodbi@CORP.BTC.BW',
       },
     });
 
-    const session = await (await connection).openSession();
+    const session = await connection.openSession();
     console.log('✅ Connected to Hive using Kerberos ticket.');
 
     const result = await session.executeStatement('SELECT current_date');
