@@ -1,49 +1,33 @@
 import hive from 'hive-driver';
-import { execSync } from 'child_process';
 
 const { TCLIService, HiveClient } = hive;
-const { KerberosAuth } = hive.auth;
-
-function ensureKerberosTicket() {
-  try {
-    execSync('klist', { stdio: 'pipe' });
-    console.log('🎫 Valid Kerberos ticket found.');
-  } catch {
-    console.log('🆕 No ticket, running kinit...');
-    execSync('kinit -k -t /home/smegaweb/prodbi.keytab prodbi@CORP.BTC.BW');
-    console.log('✅ Kerberos ticket obtained.');
-  }
-}
 
 const client = new HiveClient(TCLIService);
 
 async function connectToHive() {
   try {
-    ensureKerberosTicket(); // Make sure ticket is active before connecting
-
     const connection = client.connect({
       host: '10.128.200.51',
       port: 10000,
       options: {
-        auth: new KerberosAuth({
-          principal: 'prodbi@CORP.BTC.BW',
-          host: '10.128.200.51',
-          service: 'hive',
-        }),
+        // This tells hive-driver to use Kerberos ticket from the cache
+        auth: 'KERBEROS',
+        krbServiceName: 'hive', // This matches Hive server config (usually 'hive')
+        principal: 'prodbi@CORP.BTC.BW', // Must match your Kerberos principal
       },
     });
 
-    const session = await connection;
-    console.log('✅ Connected to Hive via Kerberos.');
+    const session = await (await connection).openSession();
+    console.log('✅ Connected to Hive using Kerberos ticket.');
 
     const result = await session.executeStatement('SELECT current_date');
     const data = await result.fetchAll();
-    console.log('📅 Hive Query Result:', data);
+    console.log('📅 Hive query result:', data);
 
     await session.close();
     await client.close();
-  } catch (error) {
-    console.error('❌ Hive connection error:', error);
+  } catch (err) {
+    console.error('❌ Hive connection error:', err);
   }
 }
 
