@@ -1,32 +1,33 @@
-import hiveDriver from 'hive-driver';
+import hive from 'hive-driver';
 
-const { TCLIService, HiveClient, HiveUtils, auth } = hiveDriver;
+const { TCLIService, HiveClient, auth } = hive;
 
 const client = new HiveClient(TCLIService);
 
-const connectToHive = async () => {
+async function connectToHive() {
   try {
-    await client.connect({
+    const connection = auth.KerberosTCPConnection({
       host: '10.128.200.51',
       port: 10000,
-      options: {
-        hiveServer2Principal: 'hive/10.128.200.51@CORP.BTC.BW',
-        service: 'hive',
-      },
-    }, new auth.KerberosAuth());
+      service: 'hive',
+      principal: 'prodbi@CORP.BTC.BW',
+      timeout: 300000
+    });
 
-    const session = await client.openSession();
-    console.log('✅ Connected to Hive with Kerberos!');
+    const session = await client.connect(connection, {});
 
+    console.log('✅ Connected to Hive via Kerberos.');
+
+    // Test query
     const result = await session.executeStatement('SELECT current_date');
-    const rows = await HiveUtils.fetchAll(result);
-    console.log('📅 Hive Result:', rows);
+    const data = await result.fetchAll();
+    console.log('🧪 Hive Query Result:', data);
 
     await session.close();
     await client.close();
-  } catch (err) {
-    console.error('❌ Hive connection error:', err);
+  } catch (error) {
+    console.error('❌ Hive connection error:', error);
   }
-};
+}
 
 connectToHive();
