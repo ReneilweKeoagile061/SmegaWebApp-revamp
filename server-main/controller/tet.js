@@ -6,7 +6,7 @@ const client = new HiveClient(TCLIService);
 
 async function connectToHive() {
   try {
-    const connection = auth.KerberosTCPConnection({
+    const connection = auth.createKerberosTcpConnection({
       host: '10.128.200.51',
       port: 10000,
       service: 'hive',
@@ -18,10 +18,9 @@ async function connectToHive() {
 
     console.log('✅ Connected to Hive via Kerberos.');
 
-    // Test query
     const result = await session.executeStatement('SELECT current_date');
     const data = await result.fetchAll();
-    console.log('🧪 Hive Query Result:', data);
+    console.log('📅 Hive Query Result:', data);
 
     await session.close();
     await client.close();
