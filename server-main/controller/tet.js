@@ -1,53 +1,47 @@
-import kerberos from 'kerberos';
 import hive from 'hive-driver';
+import { execSync } from 'child_process';
 
 const { TCLIService, HiveClient } = hive;
-const auth = hive.auth; // Fallback for CommonJS-style access
+const { KerberosAuth } = hive.auth;
+
+function ensureKerberosTicket() {
+  try {
+    execSync('klist', { stdio: 'pipe' });
+    console.log('🎫 Valid Kerberos ticket found.');
+  } catch {
+    console.log('🆕 No ticket, running kinit...');
+    execSync('kinit -k -t /home/smegaweb/prodbi.keytab prodbi@CORP.BTC.BW');
+    console.log('✅ Kerberos ticket obtained.');
+  }
+}
 
 const client = new HiveClient(TCLIService);
 
-// Function to authenticate using Kerberos and connect to Hive
 async function connectToHive() {
   try {
-    // Authenticate using kerberos (kinit equivalent)
-    kerberos.auth.authenticate({
-      principal: 'prodbi@CORP.BTC.BW',
-      keytab: '/home/smegaweb/prodbi.keytab',
-      service: 'hive'
-    }, (err) => {
-      if (err) {
-        console.error('❌ Kerberos Authentication Failed:', err);
-        return;
-      }
-      console.log('✅ Kerberos Authentication Success.');
+    ensureKerberosTicket(); // Make sure ticket is active before connecting
 
-      // Now proceed with Hive connection
-      const connection = auth({
-        host: '10.128.200.51',
-        port: 10000,
-        options: {
+    const connection = client.connect({
+      host: '10.128.200.51',
+      port: 10000,
+      options: {
+        auth: new KerberosAuth({
           principal: 'prodbi@CORP.BTC.BW',
-          service: 'hive'
-        }
-      });
-
-      client.connect(connection, {})
-        .then(async (session) => {
-          console.log('✅ Connected to Hive via Kerberos.');
-
-          // Example query to fetch current date from Hive
-          const result = await session.executeStatement('SELECT current_date');
-          const data = await result.fetchAll();
-          console.log('📅 Hive Query Result:', data);
-
-          // Close the session and client
-          await session.close();
-          await client.close();
-        })
-        .catch((err) => {
-          console.error('❌ Failed to connect to Hive:', err);
-        });
+          host: '10.128.200.51',
+          service: 'hive',
+        }),
+      },
     });
+
+    const session = await connection;
+    console.log('✅ Connected to Hive via Kerberos.');
+
+    const result = await session.executeStatement('SELECT current_date');
+    const data = await result.fetchAll();
+    console.log('📅 Hive Query Result:', data);
+
+    await session.close();
+    await client.close();
   } catch (error) {
     console.error('❌ Hive connection error:', error);
   }
