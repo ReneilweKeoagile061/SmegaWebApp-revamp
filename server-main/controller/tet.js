@@ -1,6 +1,12 @@
-import hive from 'hive-driver';
 
+
+
+const hive = require('hive-driver');
 const { TCLIService, HiveClient } = hive;
+
+console.log('TCLIService:', TCLIService); // Debug
+console.log('HiveClient:', HiveClient); // Debug
+
 const client = new HiveClient(TCLIService);
 
 async function connectToHive() {
@@ -11,8 +17,8 @@ async function connectToHive() {
       options: {
         auth: 'KERBEROS',
         krbServiceName: 'hive',
-        principal: 'prodbi@CORP.BTC.BW',  // used for GSSAPI ticket
-      }
+        principal: 'Prodbi@CORP.BTC.BW',
+      },
     });
 
     console.log('✅ Connected to Hive via Kerberos.');
