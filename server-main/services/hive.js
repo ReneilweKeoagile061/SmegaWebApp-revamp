@@ -5,8 +5,8 @@ import { config } from "dotenv";
 config();
 
 const {
-  HIVEHOST,
-  HIVEPORT,
+  HIVE_HOST,
+  HIVE_PORT,
   PRINCIPAL,
   KEYTAB_HOME,
   CONNECTION_TIMEOUT
@@ -26,8 +26,8 @@ const getSmegaStatement = async (query) => {
     // Connect to Hive using Kerberos
     await client.connect(
       {
-        host: HIVEHOST,
-        port: parseInt(HIVEPORT),
+        host: HIVE_HOST,
+        port: parseInt(HIVE_PORT),
         options: {
           principal: PRINCIPAL,
           kerberosServiceName: 'hive',
@@ -66,8 +66,6 @@ const getSmegaStatement = async (query) => {
 
   } catch (err) {
     console.error("❌ Error in getSmegaStatement:", err);
-    console.error("💡 Tip: If using a keytab, ensure the file exists and principal is valid.");
-    console.error("💡 You can run `klist` on the server to inspect current Kerberos tickets.");
     throw err;
   }
 };
