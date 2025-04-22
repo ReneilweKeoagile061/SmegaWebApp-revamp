@@ -10,35 +10,40 @@ const client = new HiveClient(TCLIService);
 async function connectToHive() {
   try {
     // Perform Kerberos authentication using the keytab
-    await kerberos.auth.kinit({
-      principal: 'prodbi@CORP.BTC.BW', // Your Kerberos principal
-      keytab: '/home/smegaweb/prodbi.keytab' // Your Kerberos keytab file path
-    });
-
-    console.log('✅ Kerberos Authentication Success.');
-
-    // Now you can proceed with the Hive connection
-    const connection = auth({
-      host: '10.128.200.51',
-      port: 10000,
-      options: {
-        principal: 'prodbi@CORP.BTC.BW',
-        service: 'hive'
+    kerberos.kinit('prodbi@CORP.BTC.BW', '/home/smegaweb/prodbi.keytab', (err) => {
+      if (err) {
+        console.error('❌ Kerberos Authentication Failed:', err);
+        return;
       }
+      console.log('✅ Kerberos Authentication Success.');
+
+      // Now proceed with Hive connection
+      const connection = auth({
+        host: '10.128.200.51',
+        port: 10000,
+        options: {
+          principal: 'prodbi@CORP.BTC.BW',
+          service: 'hive'
+        }
+      });
+
+      client.connect(connection, {})
+        .then(async (session) => {
+          console.log('✅ Connected to Hive via Kerberos.');
+
+          // Example query to fetch current date from Hive
+          const result = await session.executeStatement('SELECT current_date');
+          const data = await result.fetchAll();
+          console.log('📅 Hive Query Result:', data);
+
+          // Close the session and client
+          await session.close();
+          await client.close();
+        })
+        .catch((err) => {
+          console.error('❌ Failed to connect to Hive:', err);
+        });
     });
-
-    // Connect to Hive
-    const session = await client.connect(connection, {});
-    console.log('✅ Connected to Hive via Kerberos.');
-
-    // Example query to fetch current date from Hive
-    const result = await session.executeStatement('SELECT current_date');
-    const data = await result.fetchAll();
-    console.log('📅 Hive Query Result:', data);
-
-    // Close the session and client
-    await session.close();
-    await client.close();
   } catch (error) {
     console.error('❌ Hive connection error:', error);
   }
