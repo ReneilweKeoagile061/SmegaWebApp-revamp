@@ -1,12 +1,9 @@
 import hiveDriver from 'hive-driver';
 
-const { HiveClient, thrift } = hiveDriver;
+const { HiveClient, TCLIService_types, thrift } = hiveDriver;
 
-// Debug import
-console.log('HiveClient:', HiveClient);
-
-// Initialize client
-const client = new HiveClient();
+// Initialize client with TCLIService_types
+const client = new HiveClient(hiveDriver.TCLIService);
 
 async function connectToHive() {
   try {
