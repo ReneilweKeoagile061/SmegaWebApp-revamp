@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import hive from 'node-hive'; // (assuming you switch to node-hive)
+import hive from 'node-hive'; // use the correct import
 
 // Run kinit command
 try {
@@ -11,26 +11,30 @@ try {
   process.exit(1);
 }
 
-// Now connect to Hive after successful kinit
-const client = hive.createClient({
-  version: '0.13.0',
-  host: '10.128.200.51',
-  port: 10000,
-  timeout: 10000,
+// Initialize the Hive client
+const client = new hive.Client({
+  host: '10.128.200.51', // Hive host address
+  port: 10000,           // Hive port (adjust as needed)
+  username: 'prodbi@CORP.BTC.BW', // If needed, otherwise remove
 });
 
-client.connect((err) => {
-  if (err) {
+// Connect to Hive
+client.connect()
+  .then(() => {
+    console.log('✅ Connected to Hive!');
+    
+    // Execute a sample query
+    client.execute('SELECT current_date')
+      .then((data) => {
+        console.log('📅 Query result:', data);
+      })
+      .catch((err) => {
+        console.error('❌ Query error:', err);
+      })
+      .finally(() => {
+        client.end(); // Close connection after query
+      });
+  })
+  .catch((err) => {
     console.error('❌ Hive connection error:', err);
-    return;
-  }
-  console.log('✅ Connected to Hive!');
-  client.execute('SELECT current_date', (err, data) => {
-    if (err) {
-      console.error('❌ Query error:', err);
-    } else {
-      console.log('📅 Query result:', data);
-    }
-    client.end();
   });
-});
