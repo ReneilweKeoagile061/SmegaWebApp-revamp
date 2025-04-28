@@ -1,9 +1,9 @@
 import hiveDriver from 'hive-driver';
+const { HiveClient, thrift } = hiveDriver;
 
-const { HiveClient, TCLIService_types, thrift } = hiveDriver;
+import TCLIService from 'hive-driver/TCLIService'; // 👈 import directly like this (not hiveDriver.TCLIService)
 
-// Initialize client with TCLIService_types
-const client = new HiveClient(hiveDriver.TCLIService);
+const client = new HiveClient(TCLIService); // 👈 pass it
 
 async function connectToHive() {
   try {
@@ -34,5 +34,4 @@ async function connectToHive() {
   }
 }
 
-// Run the connection
 connectToHive();
