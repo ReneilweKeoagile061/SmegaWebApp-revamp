@@ -1,6 +1,6 @@
 import hiveDriver from 'hive-driver';
 
-const { HiveClient } = hiveDriver;
+const { HiveClient, thrift } = hiveDriver;
 
 // Debug import
 console.log('HiveClient:', HiveClient);
@@ -14,6 +14,8 @@ async function connectToHive() {
       host: '10.128.200.51',
       port: 10000,
       options: {
+        transport: thrift.TBufferedTransport,
+        protocol: thrift.TBinaryProtocol,
         auth: 'KERBEROS',
         krbServiceName: 'hive',
         principal: 'prodbi@CORP.BTC.BW',
