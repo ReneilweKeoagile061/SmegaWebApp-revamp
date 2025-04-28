@@ -1,4 +1,6 @@
-import { TCLIService, HiveClient } from 'hive-driver';
+import hiveDriver from 'hive-driver';
+
+const { TCLIService, HiveClient } = hiveDriver;
 
 // Debug imports
 console.log('TCLIService:', TCLIService);
