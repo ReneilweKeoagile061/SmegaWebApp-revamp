@@ -1,18 +1,12 @@
 import hiveDriver from 'hive-driver';
 
-const { TCLIService, HiveClient } = hiveDriver;
+const { HiveClient } = hiveDriver;
 
-// Debug imports
-console.log('TCLIService:', TCLIService);
+// Debug import
 console.log('HiveClient:', HiveClient);
 
-// Check if TCLIService is defined
-if (!TCLIService) {
-  throw new Error('TCLIService is undefined. Check hive-driver installation or version.');
-}
-
 // Initialize client
-const client = new HiveClient(TCLIService);
+const client = new HiveClient();
 
 async function connectToHive() {
   try {
