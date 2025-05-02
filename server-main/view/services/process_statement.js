@@ -18,25 +18,21 @@ document.getElementById('getButton').addEventListener('click', async () => {
     spinner.style.display = 'none';
     message.style.display = 'none';
 
-    // Check if all fields are provided
+    // Input validations
     if (!inputField1Value && (!datePicker1Value || !datePicker2Value)) {
         alert('All fields are needed');
-        return; // Exits the function without showing the spinner
+        return;
     }
-
-    // Check if both dates are provided but MSISDN is missing
     if (!inputField1Value && datePicker1Value && datePicker2Value) {
         alert('MSISDN required');
-        return; // Exits the function without showing the spinner
+        return;
     }
-
-    // Check if either of the date pickers is missing
     if (!datePicker1Value || !datePicker2Value) {
         alert('Date required');
-        return; // Exits the function without showing the spinner
+        return;
     }
 
-    // Show spinner and proceed with fetching data
+    // Show spinner
     spinner.style.display = 'block';
     downloadButton.style.display = 'none';
     message.style.display = 'none';
@@ -51,17 +47,16 @@ document.getElementById('getButton').addEventListener('click', async () => {
         const response = await axios.post("/smega_statement/user", payload);
         const data = response.data;
 
-        // Check if data is empty
-        if (!data || data.length === 0) {
+        if (!data || !Array.isArray(data.transactions) || data.transactions.length === 0) {
             message.textContent = 'No transaction found';
             message.style.display = 'block';
             spinner.style.display = 'none';
             return;
         }
 
-        // Preload XLSX library and prepare data
+        // Load XLSX and prepare the Excel blob
         XLSX = await import("https://cdn.sheetjs.com/xlsx-0.19.2/package/xlsx.mjs");
-        preparedData = await jsonToExcel(data, XLSX);
+        preparedData = await jsonToExcel(data.transactions, XLSX);
 
         downloadButton.style.display = "block";
 
@@ -83,10 +78,10 @@ function downloadExcel(blob) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    
-    // Set the filename to include the MSISDN
+
     const msisdn = document.getElementById('phone').value;
     link.download = `Smega_Statement_${msisdn}.xlsx`;
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
