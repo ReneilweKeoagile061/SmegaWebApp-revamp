@@ -1,47 +1,17 @@
-import { config } from "../config.js"; 
-import * as db from "../services/db.js";
-import { getSmegaStatement } from "./hive.js";
+import { getTransactionData } from "./api.js";
 
+const processQuery = async (params) => {
+  const msisdn = params.inputField1Value;
+  const startDate = params.datePicker1Value;
+  const endDate = params.datePicker2Value;
 
+  try {
+    const result = await getTransactionData(msisdn, startDate, endDate);
+    return result;
+  } catch (error) {
+    console.error("Failed to process query:", error);
+    throw error;
+  }
+};
 
-const processQuery = async(params) => {
-
-
-    
-    const sql = `
-
-    SELECT 
-    transaction_id,  
-    party_id,
-    customer_name,
-    customer_contact,
-    amount,previous_balance,
-    post_balance,transfer_status,
-    service_type,receiver,transaction_date 
-
-    FROM 
-    summary_smega.partitioned_hist_mx_transaction_items_smega
-    WHERE 
-        customer_contact = ${params.inputField1Value}
-    AND transaction_date BETWEEN TO_DATE('${params.datePicker1Value}') 
-    AND TO_DATE('${params.datePicker2Value}')
-`;
-
-
-
-try {
-    //pass the query that has the input paremters into this fucntion
-    const value = await getSmegaStatement(sql).then(results => results)
-
-    return value
-    
-    
-
-} catch (error) {
-    
-}
-
-}
-
-
-export {processQuery}
+export { processQuery };
