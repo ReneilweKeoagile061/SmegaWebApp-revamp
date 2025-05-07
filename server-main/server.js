@@ -32,7 +32,11 @@ app.use(session({
   secret: process.env.SessionKey, // Replace with a secure secret key
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false, maxAge: 3600000 } // 1 hour
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production', // True in production (HTTPS required)
+    httpOnly: true, // Helps prevent XSS attacks
+    maxAge: 3600000 // 1 hour
+  }
 }));
 
 // Add middleware to prevent caching of pages
