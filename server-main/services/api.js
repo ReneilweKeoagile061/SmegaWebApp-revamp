@@ -28,10 +28,10 @@ const getTransactionData = async (msisdn, startDate, endDate) => {
   try {
     const token = await getToken();
 
-    const url = `${process.env.TRANSACTION_URL}/${msisdn}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
+    const url = `https://btc-services.btc.bw/smega-statements/merchants/wallet-transactions/admin/by-date/${msisdn}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
 
     console.log("Requesting transactions from URL:", url);
-    console.log("Authorization header:", `Bearer ${token}`); // ✅ Log token being sent
+    console.log("Authorization header:", `Bearer ${token}`);
 
     const response = await axios.get(url, {
       headers: {
@@ -39,7 +39,7 @@ const getTransactionData = async (msisdn, startDate, endDate) => {
       },
     });
 
-    console.log("Transaction response:", response.data); // ✅ Log full transaction data
+    console.log("Transaction response:", response.data);
 
     return response.data;
   } catch (err) {

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMEGA Transactions - Login</title>
+    <link rel="icon" href="../resoures/BTC Smega Logo 1.png" type="image/png">
     <link rel="stylesheet" href="../css/output.css">
     <style>
         body {
@@ -60,6 +61,41 @@
             from {bottom: 30px; opacity: 1;}
             to {bottom: 0; opacity: 0;}
         }
+        
+        .logo-container {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+        
+        .smega-money-icon {
+            position: absolute;
+            width: 60px;
+            height: auto;
+            right: 10px;
+            top: -20px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+            transform: rotate(10deg);
+            z-index: 5;
+            transition: transform 0.3s ease;
+        }
+        
+        .smega-money-icon:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+        
+        .transaction-box {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body class="font-sans">
@@ -115,19 +151,26 @@
                     </svg>
                 </div>
                 <div class="z-10 text-center">
-                    <img src="../resoures/image.png" alt="BTC Logo" class="w-48 h-auto mx-auto mb-8 shadow-lg">
-                    <h2 class="text-white text-3xl font-bold mb-6">SMEGA Transactions</h2>
-                    <p class="text-white/90 max-w-md mx-auto text-lg leading-relaxed">
-                        Access your account statements quickly and securely with SMEGA Services.
-                    </p>
+                    <div class="logo-container mb-8">
+                        <img src="../resoures/BTC Smega Logo 1.png" alt="BTC Smega Logo" class="w-48 h-auto mx-auto rounded-lg bg-white/20 p-3 backdrop-blur-sm">
+                    </div>
+                    <div class="transaction-box">
+                        <h2 class="text-white text-3xl font-bold mb-6">SMEGA Transactions</h2>
+                        <p class="text-white/90 max-w-md mx-auto text-lg leading-relaxed">
+                            Access your account statements quickly and securely with SMEGA Services.
+                        </p>
+                    </div>
                 </div>
             </div>
 
             <!-- Right side - Login Form -->
             <div class="lg:w-1/2 bg-white p-8 flex items-center justify-center">
                 <div class="w-full max-w-md">
-                    <h1 class="text-2xl text-gray-800 font-bold mb-2 text-center">Welcome Back</h1>
-                    <p class="text-gray-500 mb-8 text-center">Enter your credentials to access your account</p>
+                    <div class="relative">
+                        <img src="../resoures/Smega money.png" alt="Smega Money" class="smega-money-icon">
+                        <h1 class="text-2xl text-gray-800 font-bold mb-2 text-center">Welcome Back</h1>
+                        <p class="text-gray-500 mb-8 text-center">Enter your credentials to access your account</p>
+                    </div>
                     
                     <form id="login-form" action="/auth/login" method="post" class="space-y-6">
                         <div>
@@ -188,7 +231,7 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-4 text-center mt-auto">
         <p>&copy; <span id="current-year"></span> SMEGA Statement Portal. All rights reserved.</p>
-        <p>Contact: Reneilwe Keoagile | <a href="tel:+26773602894" class="text-green-200 hover:text-white">+267 73602894</a> | <a href="mailto:support@btc.bw" class="text-green-200 hover:text-white">keoagiler@btc.bw</a></p>
+        <p>Contact: Reneilwe Keoagile | <a href="tel:+26773602894" class="text-green-200 hover:text-white">+267 73602694</a> | <a href="mailto:support@btc.bw" class="text-green-200 hover:text-white">keoagiler@btc.bw</a></p>
     </footer>
 
     <!-- Snackbar element -->

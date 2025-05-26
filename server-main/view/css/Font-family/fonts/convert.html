@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Font Converter for jsPDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/opentype.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .result { white-space: pre-wrap; background: #f5f5f5; padding: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Font Converter for jsPDF</h1>
+        <input type="file" id="fontFile" accept=".ttf,.woff" />
+        <div>
+            <label>Font Name: <input type="text" id="fontName" value="TrebuchetMS" /></label>
+            <label>Style: <input type="text" id="fontStyle" value="normal" /></label>
+        </div>
+        <button onclick="convertFont()">Convert</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        async function convertFont() {
+            const file = document.getElementById('fontFile').files[0];
+            if (!file) {
+                alert('Please select a font file');
+                return;
+            }
+
+            const fontName = document.getElementById('fontName').value;
+            const fontStyle = document.getElementById('fontStyle').value;
+            
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const font = await opentype.parse(arrayBuffer);
+                
+                // Convert font to base64
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Font = e.target.result.split(',')[1];
+                    
+                    // Create the font file content
+                    const content = `
+                    (function(jsPDFAPI) {
+                        var font = '${base64Font}';
+                        var callAddFont = function() {
+                            this.addFileToVFS('${fontName}-${fontStyle}.ttf', font);
+                            this.addFont('${fontName}-${fontStyle}.ttf', '${fontName}', '${fontStyle}');
+                        };
+                        jsPDFAPI.events.push(['addFonts', callAddFont]);
+                    })(jsPDF.API);`;
+                    
+                    // Display the result
+                    document.getElementById('result').textContent = content;
+                    
+                    // Create download link
+                    const blob = new Blob([content], { type: 'text/javascript' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${fontName}-${fontStyle}.js`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Error converting font:', error);
+                alert('Error converting font. Check console for details.');
+            }
+        }
+    </script>
+</body>
+</html> 
