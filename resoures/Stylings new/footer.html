@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer Example</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'btc-dark-green': '#074f36',
+                        'btc-green': '#23A84A',
+                        'btc-light-green': '#4cd964',
+                        'btc-yellow': '#f8e71c',
+                        'btc-gray': '#6b6b6b',
+                        'btc-light-gray': '#a7a7a7',
+                        'btc-blue': '#0078d4',
+                        'btc-light-blue': '#68bbfb'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-gray-300 p-4 text-center">
+        <p>&copy; <span id="current-year"></span> Botswana Telecommunications Corporation. All rights reserved.</p>
+        <p>Contact: <a href="mailto:support@btc.bw" class="text-btc-light-green hover:text-white">support@btc.bw</a></p>
+    </footer>
+
+    <script>
+        // Set current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html> 

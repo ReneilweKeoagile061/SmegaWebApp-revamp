@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTC Statement Portal - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'btc-dark-green': '#074f36',
+                        'btc-green': '#23A84A',
+                        'btc-light-green': '#4cd964',
+                        'btc-yellow': '#f8e71c',
+                        'btc-gray': '#6b6b6b',
+                        'btc-light-gray': '#a7a7a7',
+                        'btc-blue': '#0078d4',
+                        'btc-light-blue': '#68bbfb'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <!-- Logo -->
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 bg-btc-green rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M12,4c4.4,0,8,3.6,8,8s-3.6,8-8,8s-8-3.6-8-8S7.6,4,12,4z M11,7v4H7v2h4v4h2v-4h4v-2h-4V7H11z" />
+                            </svg>
+                        </div>
+                        <span class="text-xl font-semibold text-gray-800">BTC Statement Portal</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <!-- Logout Button -->
+                    <button id="logout-btn" class="ml-4 px-4 py-2 flex items-center text-sm font-medium text-gray-700 hover:text-btc-green focus:outline-none transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome!</h2>
+            <p class="text-gray-600 mb-6">Access your statements quickly and securely with Botswana Telecommunications Corporation.</p>
+            
+            <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Statement Search</h3>
+                
+                <form id="statement-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" pattern="[0-9]{8}" maxlength="8" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-btc-green focus:border-btc-green transition-colors" 
+                               required>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Period</label>
+                        <div class="flex gap-4">
+                            <div class="w-full">
+                                <label for="date1" class="block text-xs text-gray-500 mb-1">From</label>
+                                <input type="date" name="date1" id="date1" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-btc-green focus:border-btc-green transition-colors">
+                            </div>
+                            <div class="w-full">
+                                <label for="date2" class="block text-xs text-gray-500 mb-1">To</label>
+                                <input type="date" name="date2" id="date2" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-btc-green focus:border-btc-green transition-colors">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:col-span-2 flex flex-wrap gap-4 justify-center items-center">
+                        <button type="button" id="search-button" 
+                                class="bg-btc-green text-white py-2 px-6 rounded-md hover:bg-btc-dark-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btc-green transition-colors duration-200">
+                            SEARCH
+                        </button>
+                        <div id="spinner" class="hidden w-6 h-6 border-4 border-btc-green border-t-transparent rounded-full animate-spin"></div>
+                        <div id="message" class="hidden text-red-500"></div>
+                        <button type="button" id="download-button" 
+                                class="hidden bg-btc-blue text-white py-2 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-btc-blue transition-colors duration-200">
+                            Download
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Results Section (Initially Hidden) -->
+        <div id="results-section" class="hidden bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Statement Results</h3>
+                <button id="close-results" class="text-gray-400 hover:text-gray-500">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Results will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 p-4 text-center mt-auto">
+        <p>&copy; <span id="current-year"></span> Botswana Telecommunications Corporation. All rights reserved.</p>
+        <p>Contact: <a href="mailto:support@btc.bw" class="text-btc-light-green hover:text-white">support@btc.bw</a></p>
+    </footer>
+
+    <script>
+        // Set current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Handle logout
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'login.html';
+        });
+
+        // Handle search button click
+        document.getElementById('search-button').addEventListener('click', function() {
+            const phone = document.getElementById('phone').value;
+            const date1 = document.getElementById('date1').value;
+            const date2 = document.getElementById('date2').value;
+            const spinner = document.getElementById('spinner');
+            const message = document.getElementById('message');
+            const downloadButton = document.getElementById('download-button');
+            
+            // Input validations
+            if (!phone) {
+                message.textContent = 'Phone number is required';
+                message.classList.remove('hidden');
+                return;
+            }
+            
+            if (!date1 || !date2) {
+                message.textContent = 'Both dates are required';
+                message.classList.remove('hidden');
+                return;
+            }
+            
+            // Show spinner, hide message and download button
+            spinner.classList.remove('hidden');
+            message.classList.add('hidden');
+            downloadButton.classList.add('hidden');
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // Hide spinner
+                spinner.classList.add('hidden');
+                
+                // Generate dummy data for demonstration
+                generateDummyResults();
+                
+                // Show results section and download button
+                document.getElementById('results-section').classList.remove('hidden');
+                downloadButton.classList.remove('hidden');
+                
+                // Alternative: Show error message
+                // message.textContent = 'No transactions found';
+                // message.classList.remove('hidden');
+            }, 1500);
+        });
+
+        // Close results
+        document.getElementById('close-results').addEventListener('click', function() {
+            document.getElementById('results-section').classList.add('hidden');
+        });
+        
+        // Generate dummy statement data
+        function generateDummyResults() {
+            const resultsBody = document.getElementById('results-body');
+            resultsBody.innerHTML = '';
+            
+            const entries = 8;
+            let balance = 150.00;
+            const date = new Date();
+            
+            for (let i = 0; i < entries; i++) {
+                const row = document.createElement('tr');
+                
+                // Subtract days for each entry
+                date.setDate(date.getDate() - Math.floor(Math.random() * 5) - 1);
+                const formattedDate = date.toISOString().split('T')[0];
+                
+                // Random amount between -50 and 100
+                const amount = Math.round((Math.random() * 150 - 50) * 100) / 100;
+                
+                // Calculate running balance
+                balance = Math.round((balance + amount) * 100) / 100;
+                
+                // Determine description based on amount
+                let description;
+                if (amount > 0) {
+                    description = 'Deposit/Credit';
+                } else {
+                    description = 'Service Fee/Charge';
+                }
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formattedDate}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${description}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm ${amount >= 0 ? 'text-green-600' : 'text-red-600'}">${amount >= 0 ? '+' : ''}${amount.toFixed(2)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${balance.toFixed(2)}</td>
+                `;
+                
+                resultsBody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'btc-dark-green': '#074f36',
+                        'btc-green': '#23A84A',
+                        'btc-light-green': '#4cd964',
+                        'btc-yellow': '#f8e71c',
+                        'btc-gray': '#6b6b6b',
+                        'btc-light-gray': '#a7a7a7',
+                        'btc-blue': '#0078d4',
+                        'btc-light-blue': '#68bbfb'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="bg-btc-dark-green text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo and Branding -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-btc-green rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M12,4c4.4,0,8,3.6,8,8s-3.6,8-8,8s-8-3.6-8-8S7.6,4,12,4z M11,7v4H7v2h4v4h2v-4h4v-2h-4V7H11z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold tracking-tight">
+                            BTC Statement Portal
+                            <span class="ml-2 inline-flex items-center rounded-md bg-btc-green/20 px-2 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-btc-green/30">
+                                v1.0
+                            </span>
+                        </h1>
+                        <p class="text-xs text-green-200 hidden sm:block">
+                            Customer Statement System
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div id="desktop-nav" class="hidden">
+                    <nav class="hidden lg:flex items-center space-x-6">
+                        <a
+                            href="/home"
+                            class="hover:text-btc-light-green transition-colors duration-200 flex items-center space-x-1.5 px-3 py-2 rounded-md hover:bg-btc-dark-green/70"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h2a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3" />
+                            </svg>
+                            <span>Home</span>
+                        </a>
+
+                        <a
+                            href="/statements"
+                            class="hover:text-btc-light-green transition-colors duration-200 flex items-center space-x-1.5 px-3 py-2 rounded-md hover:bg-btc-dark-green/70"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                            <span>Statements</span>
+                        </a>
+
+                        <a
+                            href="/profile"
+                            class="hover:text-btc-light-green transition-colors duration-200 flex items-center space-x-1.5 px-3 py-2 rounded-md hover:bg-btc-dark-green/70"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span>Profile</span>
+                        </a>
+                        
+                        <a
+                            href="#"
+                            id="logout-btn"
+                            class="hover:text-red-200 transition-colors duration-200 flex items-center space-x-1.5 px-3 py-2 rounded-md hover:bg-btc-dark-green/70"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span>Logout</span>
+                        </a>
+                    </nav>
+
+                    <!-- Mobile Menu Button -->
+                    <button
+                        id="menu-toggle"
+                        class="lg:hidden text-white focus:outline-none p-2 rounded-md hover:bg-btc-dark-green/70"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="lg:hidden hidden bg-btc-dark-green/90 text-white py-2">
+                <nav class="flex flex-col space-y-2 px-4">
+                    <a
+                        href="/home"
+                        class="hover:text-btc-light-green transition-colors duration-200 flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-btc-dark-green/70"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h2a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3" />
+                        </svg>
+                        <span>Home</span>
+                    </a>
+
+                    <a
+                        href="/statements"
+                        class="hover:text-btc-light-green transition-colors duration-200 flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-btc-dark-green/70"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        <span>Statements</span>
+                    </a>
+
+                    <a
+                        href="/profile"
+                        class="hover:text-btc-light-green transition-colors duration-200 flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-btc-dark-green/70"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>Profile</span>
+                    </a>
+
+                    <a
+                        href="#"
+                        class="hover:text-red-200 transition-colors duration-200 flex items-center space-x-3 px-3 py-2 rounded-md hover:bg-btc-dark-green/70 text-left"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Security Indicator -->
+        <div id="security-indicator" class="hidden bg-btc-dark-green/80 text-green-100 text-xs py-1 px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Secure Session</span>
+            </div>
+            <span id="last-activity"></span>
+        </div>
+    </header>
+
+    <script>
+        // Check login status
+        function checkLogin() {
+            // For demonstration purposes, you can simulate login status
+            // In a real app, you would check cookies or localStorage
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                document.getElementById('desktop-nav').classList.remove('hidden');
+                document.getElementById('security-indicator').classList.remove('hidden');
+                document.getElementById('last-activity').textContent = 'Last activity: ' + new Date().toLocaleTimeString();
+            }
+        }
+
+        // Toggle mobile menu
+        document.getElementById('menu-toggle')?.addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Handle logout
+        document.getElementById('logout-btn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Clear login state
+            localStorage.removeItem('isLoggedIn');
+            // Redirect to login page
+            window.location.href = 'login.html';
+        });
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLogin();
+        });
+    </script>
+</body>
+</html> 
