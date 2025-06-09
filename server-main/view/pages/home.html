@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMEGA Statement Portal - Dashboard</title>
+    <link rel="icon" href="../../resoures/BTC Smega Logo 1.png" type="image/png">
+    <link rel="stylesheet" href="../css/output.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            background-color: #f5f7f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-container {
+            flex: 1;
+        }
+        
+        .search-card {
+            background-color: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .search-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-form-bg {
+            background-color: rgba(35, 168, 74, 0.03);
+            border-radius: 0 0 0.75rem 0.75rem;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #23A84A;
+        }
+        
+        .form-input {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #23A84A;
+            box-shadow: 0 0 0 2px rgba(35, 168, 74, 0.2);
+        }
+        
+        .search-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #23A84A;
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        .search-btn:hover {
+            background-color: #096b28;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .transaction-table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+        }
+        .transaction-table th, .transaction-table td {
+            padding: 0.75rem 1rem;
+            white-space: nowrap;
+        }
+        .transaction-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f8fafc;
+            z-index: 10;
+        }
+        
+        .smega-money-icon {
+            position: absolute;
+            width: 90px;
+            height: auto;
+            right: 20px;
+            top: -25px;
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2));
+            transform: rotate(0deg);
+            z-index: 5;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 5px;
+            backdrop-filter: blur(4px);
+        }
+        
+        .smega-money-icon:hover {
+            transform: translateY(-3px);
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.25));
+        }
+        
+        .statement-search-header {
+            position: relative;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-green-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo and Branding -->
+                <div class="flex items-center space-x-3">
+                    <img src="../../resoures/Smega.png" alt="Mohiri Portal Logo" class="h-12 w-auto rounded-md border-2 border-white" />
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold tracking-tight">
+                            Smega Statement Portal
+                            <span class="ml-2 inline-flex items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 ring-1 ring-inset ring-green-800/20">
+                                Portal v1.0.4
+                            </span>
+                        </h1>
+                        <p class="text-xs text-green-200 hidden sm:block">
+                            Botswana Telecommunications Corporation
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Navigation Menu -->
+                <nav class="hidden lg:flex items-center space-x-6">
+                    <a href="/" class="hover:text-red-200 transition-colors duration-200 flex items-center space-x-1.5 px-3 py-2 rounded-md hover:bg-green-700/50">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+                
+                <!-- Mobile Menu Button -->
+                <button class="lg:hidden text-white focus:outline-none p-2 rounded-md hover:bg-green-700/50">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Security Indicator -->
+        <div class="bg-green-800/90 text-green-100 text-xs py-1 px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Secure Session</span>
+            </div>
+            <span>Last activity: <span id="last-activity">00:00:00</span></span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container container mx-auto px-4 py-6">
+        <div class="search-card overflow-hidden mb-6">
+            <div class="p-4 md:p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800">Welcome, <span id="userName" class="text-green-700">User</span>!</h2>
+                <p class="text-gray-600 mt-1 text-sm">Access your statements quickly and securely.</p>
+            </div>
+            
+            <div class="p-4 md:p-6 search-form-bg">
+                <div class="flex items-center mb-4 statement-search-header">
+                    <div class="bg-green-700/10 p-1.5 rounded-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 ml-2">Statement Search</h3>
+                    <img src="../resoures/Smega money.png" alt="Smega Money" class="smega-money-icon">
+                </div>
+                
+                <form id="form" class="space-y-4">
+                    <div class="bg-white p-4 rounded-md shadow-sm">
+                        <label for="phone" class="block text-xs font-medium text-gray-700 mb-1">Phone Number</label>
+                        <div class="relative">
+                            <div class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                            <input type="tel" id="phone" name="phone" pattern="[0-9]{8}" maxlength="8" 
+                                   class="form-input" 
+                                   placeholder="73001762"
+                                   required>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-md shadow-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Period</label>
+                                <div>
+                                    <label for="date1" class="block text-xs text-gray-500 mb-1">From</label>
+                                    <div class="relative">
+                                        <div class="input-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <input type="date" name="date1" id="date1" class="form-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1 opacity-0 md:block hidden">Period</label>
+                                <div>
+                                    <label for="date2" class="block text-xs text-gray-500 mb-1">To</label>
+                                    <div class="relative">
+                                        <div class="input-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <input type="date" name="date2" id="date2" class="form-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center pt-2">
+                        <button type="button" id="getButton" class="search-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            SEARCH
+                        </button>
+                        <div id="spinner" class="hidden w-5 h-5 ml-3 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
+                        <div id="message" class="hidden ml-3 text-red-500 text-sm"></div>
+                        <button type="button" id="downloadButton" 
+                                class="hidden ml-3 flex items-center justify-center bg-blue-600 text-white text-sm py-1.5 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Transaction Results Section -->
+        <div id="transaction-results-section" class="search-card mt-6 p-4 md:p-6 hidden">
+            <!-- Customer Info Section -->
+            <div id="customer-info-section" class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-500">Customer Name</h4>
+                        <div class="mt-2">
+                            <p class="text-lg font-semibold text-gray-800" id="customer-name">-</p>
+                            <p class="text-sm text-gray-600" id="customer-phone">-</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-gray-500">Account Balance</p>
+                        <p class="text-lg font-semibold text-gray-800" id="account-balance">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center mb-4">
+                <div class="bg-green-700/10 p-1.5 rounded-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-2">Transaction History</h3>
+            </div>
+            <div id="transaction-table-container" class="transaction-table-container">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Previous Balance</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Post Balance</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Name</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Receiver</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-table-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Transaction rows will be inserted here by JavaScript -->
+                        <tr>
+                           <td colspan="8" class="text-center py-10 text-gray-500" id="no-transactions-message">
+                                No transactions to display. Perform a search to see results.
+                           </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- How It Works Section -->
+        <div class="search-card mt-6 p-4 md:p-6">
+            <div class="flex items-center mb-4">
+                <div class="bg-green-700/10 p-1.5 rounded-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-2">How It Works</h3>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Searching for Statements -->
+                <div class="bg-green-50/50 p-3 rounded-lg border border-green-200">
+                    <h4 class="text-sm font-semibold text-green-800 mb-1.5 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        Searching for Statements
+                    </h4>
+                    <ul class="list-disc list-inside text-gray-700 text-sm space-y-1 pl-2">
+                        <li><strong>Phone Number:</strong> Enter the 8-digit phone number (e.g., 73025073) for which you want to retrieve statements.</li>
+                        <li><strong>Period:</strong> Select the "From" and "To" dates to define the statement period. You can select past dates for the "From" date.</li>
+                        <li><strong>Search Button:</strong> Click the "SEARCH" button. The system will then retrieve the statement data for the specified phone number and period.</li>
+                    </ul>
+                </div>
+
+                <!-- Downloading Statements -->
+                <div class="bg-green-50/50 p-3 rounded-lg border border-green-200">
+                    <h4 class="text-sm font-semibold text-green-800 mb-1.5 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Downloading Statements
+                    </h4>
+                    <ul class="list-disc list-inside text-gray-700 text-sm space-y-1 pl-2">
+                        <li><strong>Download Button:</strong> After a successful search where data is found, the "Download" button will become active. Click this button to download your statement as a CSV Excel file.</li>
+                    </ul>
+                </div>
+                
+                <!-- General Tips -->
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-1.5 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        General Tips
+                    </h4>
+                    <ul class="list-disc list-inside text-gray-600 text-sm space-y-1 pl-2">
+                        <li><strong>Accurate Information:</strong> Ensure the phone number and date range are correct to get the desired statement. Dont enter 267!</li>
+                        <li><strong>Session Security:</strong> Your session is secure. Always remember to log out when you are finished using the portal.</li>
+                         <li><strong>No Results:</strong> If no data is found for the criteria, the "Download" button will not activate, and a message may appear near the search button.</li>
+                    </ul>
+                </div>
+                <div class="text-xs text-gray-400">
+                    Last login: <span id="login-time"></span> | Session expires: <span id="session-expiry"></span>
+                </div>
+            </div>
+            <div class="text-center text-xs">
+                <p>&copy; <span id="current-year-footer"></span> Smega Statement Portal. All rights reserved.</p>
+                <p class="text-gray-400">Created by Reneilwe Keoagile</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-4 text-center mt-auto">
+        <p>&copy; <span id="current-year"></span> SMEGA Statement Portal. All rights reserved.</p>
+        <p>Contact: DataScienceTeam | <a href="tel:+26773602894" class="text-green-200 hover:text-white">+267 73001029</a> | <a href="mailto:support@btc.bw" class="text-green-200 hover:text-white">DataScienceTeam@btc.bw</a></p>
+    </footer>
+
+    <!-- Custom No Transactions Modal -->
+    <div id="no-transactions-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl text-center max-w-sm mx-auto transform transition-all scale-95 opacity-0" style="transition-duration: 300ms;">
+            <img src="../../resoures/Error-smega.avif" alt="Error Illustration" class="w-28 h-28 md:w-32 md:h-32 mx-auto mb-5"/>
+            <h3 class="text-lg md:text-xl font-semibold text-gray-800 mb-2">No Transactions Found</h3>
+            <p id="no-transactions-message-text" class="text-sm text-gray-600 mb-6">The phone number <span class="font-medium text-gray-700"></span> has no transactions for the selected period.</p>
+            <button id="no-transactions-back-btn" class="w-full px-4 py-2.5 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-700 transition-colors duration-200">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Load jsPDF before other scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="module" src="../services/process_statement.js"></script>
+
+    <script>
+        // Set current year and last activity time
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        document.getElementById('last-activity').textContent = new Date().toLocaleTimeString();
+
+        function getCookie(name) {
+            const value = document.cookie;
+            const parts = value.split('; ' + name + '=');
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    
+        window.onload = function() {
+            const loginSuccess = getCookie('loginSuccess');
+            if (loginSuccess) {
+                const decodedString = decodeURIComponent(loginSuccess);
+                const userData = JSON.parse(decodedString); // Deserialize the JSON string
+                if (userData.state === true) {
+                    const userNameElement = document.getElementById('userName');
+                    const userName = userData.name; // Extract the name from the deserialized object
+                    userNameElement.textContent = userName; // Set the name in the HTML element
+                }
+                // Clear the cookie
+                document.cookie = 'loginSuccess=; Max-Age=0; path=/;';
+            }
+        }
+
+        document.getElementById('phone').addEventListener('input', function (e) {
+            let inputValue = e.target.value;
+
+            // Remove non-numeric characters
+            let numericValue = inputValue.replace(/\D/g, '');
+
+            // Ensure the input starts with "7"
+            if (!numericValue.startsWith('7')) {
+                numericValue = '7' + numericValue.replace(/^7/, '');
+            }
+
+            // Limit to 8 characters in total
+            if (numericValue.length > 8) {
+                numericValue = numericValue.slice(0, 8);
+            }
+
+            e.target.value = numericValue;
+        });
+
+        // Initialize the second date with today's date when the first date is selected
+        document.getElementById('date1').addEventListener('change', function() {
+            document.getElementById('date2').min = this.value;
+            if (!document.getElementById('date2').value) {
+                document.getElementById('date2').value = this.value;
+            }
+        });
+    </script>
+</body>
+</html>

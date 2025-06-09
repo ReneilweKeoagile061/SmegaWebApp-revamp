@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMEGA Transactions - Login</title>
+    <link rel="icon" href="../resoures/BTC Smega Logo 1.png" type="image/png">
+    <link rel="stylesheet" href="../css/output.css">
+    <style>
+        body {
+            background-color: #f5f7f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .green-gradient {
+            background: linear-gradient(135deg, #23A84A, #074f36);
+        }
+        
+        .password-input-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b6b6b;
+        }
+        
+        #snackbar {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+
+        #snackbar.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+        
+        .logo-container {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-container:hover {
+            transform: scale(1.02);
+        }
+        
+        .smega-money-icon {
+            position: absolute;
+            width: 60px;
+            height: auto;
+            right: 10px;
+            top: -20px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+            transform: rotate(10deg);
+            z-index: 5;
+            transition: transform 0.3s ease;
+        }
+        
+        .smega-money-icon:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+        
+        .transaction-box {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <!-- Header -->
+    <header class="bg-green-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo and Branding -->
+                <div class="flex items-center space-x-3">
+                    <img src="../resoures/Smega.png" alt="Mohiri Portal Logo" class="h-12 w-auto rounded-md border-2 border-white" />
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold tracking-tight">
+                            Smega Statement Portal
+                            <span class="ml-2 inline-flex items-center rounded-md bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 ring-1 ring-inset ring-green-800/20">
+                                Portal v1.0.4
+                            </span>
+                        </h1>
+                        <p class="text-xs text-green-200 hidden sm:block">
+                            Botswana Telecommunications Corporation
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Indicator -->
+        <div class="bg-green-800/90 text-green-100 text-xs py-1 px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Secure Connection</span>
+            </div>
+            <span>Login Page</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-5xl flex flex-col lg:flex-row rounded-xl overflow-hidden shadow-2xl">
+            <!-- Left side - Green BG with SMEGA logo -->
+            <div class="lg:w-1/2 green-gradient p-8 lg:p-12 flex flex-col items-center justify-center relative">
+                <div class="absolute inset-0 opacity-20">
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="wave" width="200" height="200" patternUnits="userSpaceOnUse">
+                                <path d="M0 25C 40 10, 60 40, 100 25S 160 10, 200 25S 260 40, 300 25" stroke="rgba(255,255,255,0.2)" fill="none" stroke-width="2" />
+                                <path d="M0 50C 40 35, 60 65, 100 50S 160 35, 200 50S 260 65, 300 50" stroke="rgba(255,255,255,0.2)" fill="none" stroke-width="2" />
+                                <path d="M0 75C 40 60, 60 90, 100 75S 160 60, 200 75S 260 90, 300 75" stroke="rgba(255,255,255,0.2)" fill="none" stroke-width="2" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#wave)" />
+                    </svg>
+                </div>
+                <div class="z-10 text-center">
+                    <div class="logo-container mb-8">
+                        <img src="../resoures/BTC Smega Logo 1.png" alt="BTC Smega Logo" class="w-48 h-auto mx-auto rounded-lg bg-white/20 p-3 backdrop-blur-sm">
+                    </div>
+                    <div class="transaction-box">
+                        <h2 class="text-white text-3xl font-bold mb-6">SMEGA Transactions</h2>
+                        <p class="text-white/90 max-w-md mx-auto text-lg leading-relaxed">
+                            Access your account statements quickly and securely with SMEGA Services.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right side - Login Form -->
+            <div class="lg:w-1/2 bg-white p-8 flex items-center justify-center">
+                <div class="w-full max-w-md">
+                    <div class="relative">
+                        <img src="../resoures/Smega money.png" alt="Smega Money" class="smega-money-icon">
+                        <h1 class="text-2xl text-gray-800 font-bold mb-2 text-center">Welcome Back</h1>
+                        <p class="text-gray-500 mb-8 text-center">Enter your credentials to access your account</p>
+                    </div>
+                    
+                    <form id="login-form" action="/auth/login" method="post" class="space-y-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Login ID</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 5.523 4.477 10 10 10s10-4.477 10-10C20 4.477 15.523 0 10 0zm0 18a8 8 0 110-16 8 8 0 010 16z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <input type="email" id="email" name="email" class="w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-green-700 transition-colors" placeholder="keoagiler@btc.bw" required>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <div class="password-input-wrapper">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <input type="password" id="password" name="password" class="w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-green-700 transition-colors" placeholder="••••••" required>
+                                <span class="password-toggle" id="password-toggle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-green-700 focus:ring-green-700 border-gray-300 rounded">
+                                <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                            </div>
+                            <a href="#" class="text-sm text-green-700 hover:text-green-800 font-medium">Forgot Password?</a>
+                        </div>
+                        
+                        <button type="submit" class="w-full py-3 px-4 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-700 transition-colors duration-200 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                            </svg>
+                            Login
+                        </button>
+                    </form>
+                    
+                    <p class="mt-8 text-sm text-gray-500 text-center">
+                        Need assistance? Contact <a href="mailto:support@btc.bw" class="text-green-700 hover:text-green-800 font-medium">support@btc.bw</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-4 text-center mt-auto">
+        <p>&copy; <span id="current-year"></span> SMEGA Statement Portal. All rights reserved.</p>
+        <p>Contact: Reneilwe Keoagile | <a href="tel:+26773602894" class="text-green-200 hover:text-white">+267 73602694</a> | <a href="mailto:support@btc.bw" class="text-green-200 hover:text-white">keoagiler@btc.bw</a></p>
+    </footer>
+
+    <!-- Snackbar element -->
+    <div id="snackbar">Invalid email or password. Please try again.</div>
+
+    <script>
+        // Set current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Password visibility toggle
+        document.getElementById('password-toggle').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Change the eye icon based on password visibility
+            this.innerHTML = type === 'text' 
+                ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>'
+                : '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>';
+        });
+
+        function showSnackbar(message) {
+            var snackbar = document.getElementById("snackbar");
+            snackbar.textContent = message; // Set the message in the snackbar
+            snackbar.className = "show";
+            setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+        }
+    
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    
+        window.onload = function() {
+            const loginError = getCookie('loginError');
+            if (loginError) {
+                const decodedString = decodeURIComponent(loginError);
+                const errorData = JSON.parse(decodedString); // Deserialize the JSON string
+                if (errorData.state === false) {
+                    showSnackbar(errorData.message); // Show the message from the serialized object
+                }
+                // Clear the cookie
+                document.cookie = 'loginError=; Max-Age=0; path=/;';
+            }
+        }
+    </script>
+</body>
+</html>
