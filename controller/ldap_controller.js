@@ -13,9 +13,9 @@ const login = async (req, res, next) => {
   if (email && password) {
       const result = await auth(email, password);
       if (result.state) {
-        console.log(result)
+        console.log("Result object before cookie serialization:", result);
         const serialized = JSON.stringify(result)
-        res.cookie('loginSuccess', serialized, { maxAge: 5000, httpOnly: false });
+        res.cookie('loginSuccess', serialized, { maxAge: 3600000, httpOnly: false });
         res.cookie('authToken', result.token, { httpOnly: true, secure: true, maxAge: 3600000 }); // 1 hour
         req.session.user = { email: email, token: result.token };
 

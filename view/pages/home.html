@@ -353,7 +353,7 @@
                         Downloading Statements
                     </h4>
                     <ul class="list-disc list-inside text-gray-700 text-sm space-y-1 pl-2">
-                        <li><strong>Download Button:</strong> After a successful search where data is found, the "Download" button will become active. Click this button to download your statement as a CSV Excel file.</li>
+                        <li><strong>Download Button:</strong> After a successful search where data is found, the "Download" button will become active. Click this button to download your statement as a PDF file.</li>
                     </ul>
                 </div>
                 
@@ -375,17 +375,13 @@
                     Last login: <span id="login-time"></span> | Session expires: <span id="session-expiry"></span>
                 </div>
             </div>
-            <div class="text-center text-xs">
-                <p>&copy; <span id="current-year-footer"></span> Smega Statement Portal. All rights reserved.</p>
-                <p class="text-gray-400">Created by Reneilwe Keoagile</p>
-            </div>
         </div>
     </main>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-4 text-center mt-auto">
-        <p>&copy; <span id="current-year"></span> SMEGA Statement Portal. All rights reserved.</p>
-        <p>Contact: DataScienceTeam | <a href="tel:+26773602894" class="text-green-200 hover:text-white">+267 73001029</a> | <a href="mailto:support@btc.bw" class="text-green-200 hover:text-white">DataScienceTeam@btc.bw</a></p>
+        <p>Contact:© 2025 Botswana Telecommunications Corporation. All rights reserved.</p>
+        <p>itdevelopment@btc.bw</p>
     </footer>
 
     <!-- Custom No Transactions Modal -->
@@ -405,56 +401,86 @@
     <script type="module" src="../services/process_statement.js"></script>
 
     <script>
-        // Set current year and last activity time
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-        document.getElementById('last-activity').textContent = new Date().toLocaleTimeString();
-
         function getCookie(name) {
-            const value = document.cookie;
-            const parts = value.split('; ' + name + '=');
-            if (parts.length === 2) return parts.pop().split(';').shift();
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
         }
     
-        window.onload = function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current year and last activity time
+            const currentYearElement = document.getElementById('current-year-footer');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            } else {
+                console.warn("Element with ID 'current-year-footer' not found.");
+            }
+
+            const lastActivityElement = document.getElementById('last-activity');
+            if (lastActivityElement) {
+                lastActivityElement.textContent = new Date().toLocaleTimeString();
+            } else {
+                console.warn("Element with ID 'last-activity' not found.");
+            }
+
+
             const loginSuccess = getCookie('loginSuccess');
             if (loginSuccess) {
                 const decodedString = decodeURIComponent(loginSuccess);
-                const userData = JSON.parse(decodedString); // Deserialize the JSON string
-                if (userData.state === true) {
-                    const userNameElement = document.getElementById('userName');
-                    const userName = userData.name; // Extract the name from the deserialized object
-                    userNameElement.textContent = userName; // Set the name in the HTML element
+                try {
+                    const userData = JSON.parse(decodedString); // Deserialize the JSON string
+                    console.log("Frontend - userData after parsing cookie:", userData);
+                    if (userData.state === true) {
+                        const userNameElement = document.getElementById('userName');
+                        console.log("Frontend - userNameElement:", userNameElement);
+                        const userName = userData.name;
+                        if (userNameElement && userName) { // Check if userName is also valid
+                            userNameElement.textContent = userName; // Set the name in the HTML element
+                            console.log("Frontend - User name set to:", userName);
+                        } else {
+                            console.warn("Frontend - userNameElement or userName is null/undefined. userNameElement:", userNameElement, "userName:", userName);
+                        }
+                    }
+                    // Clear the cookie
+                    document.cookie = 'loginSuccess=; Max-Age=0; path=/;';
+                } catch (e) {
+                    console.error("Error parsing loginSuccess cookie JSON:", e);
+                    // Optionally clear the malformed cookie
+                    document.cookie = 'loginSuccess=; Max-Age=0; path=/;';
                 }
-                // Clear the cookie
-                document.cookie = 'loginSuccess=; Max-Age=0; path=/;';
-            }
-        }
-
-        document.getElementById('phone').addEventListener('input', function (e) {
-            let inputValue = e.target.value;
-
-            // Remove non-numeric characters
-            let numericValue = inputValue.replace(/\D/g, '');
-
-            // Ensure the input starts with "7"
-            if (!numericValue.startsWith('7')) {
-                numericValue = '7' + numericValue.replace(/^7/, '');
             }
 
-            // Limit to 8 characters in total
-            if (numericValue.length > 8) {
-                numericValue = numericValue.slice(0, 8);
-            }
+            document.getElementById('phone').addEventListener('input', function (e) {
+                let inputValue = e.target.value;
 
-            e.target.value = numericValue;
-        });
+                // Remove non-numeric characters
+                let numericValue = inputValue.replace(/\D/g, '');
 
-        // Initialize the second date with today's date when the first date is selected
-        document.getElementById('date1').addEventListener('change', function() {
-            document.getElementById('date2').min = this.value;
-            if (!document.getElementById('date2').value) {
-                document.getElementById('date2').value = this.value;
-            }
+                // Ensure the input starts with "7"
+                if (!numericValue.startsWith('7')) {
+                    numericValue = '7' + numericValue.replace(/^7/, '');
+                }
+
+                // Limit to 8 characters in total
+                if (numericValue.length > 8) {
+                    numericValue = numericValue.slice(0, 8);
+                }
+
+                e.target.value = numericValue;
+            });
+
+            // Initialize the second date with today's date when the first date is selected
+            document.getElementById('date1').addEventListener('change', function() {
+                document.getElementById('date2').min = this.value;
+                if (!document.getElementById('date2').value) {
+                    document.getElementById('date2').value = this.value;
+                }
+            });
         });
     </script>
 </body>

@@ -221,7 +221,7 @@
                     </form>
                     
                     <p class="mt-8 text-sm text-gray-500 text-center">
-                        Need assistance? Contact <a href="mailto:support@btc.bw" class="text-green-700 hover:text-green-800 font-medium">support@btc.bw</a>
+                        Need assistance? Contact <a href="mailto:support@btc.bw" class="text-green-700 hover:text-green-800 font-medium">datascienceteam@btc.bw</a>
                     </p>
                 </div>
             </div>
@@ -230,8 +230,8 @@
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-4 text-center mt-auto">
-        <p>&copy; <span id="current-year"></span> SMEGA Statement Portal. All rights reserved.</p>
-        <p>Contact: Reneilwe Keoagile | <a href="tel:+26773602894" class="text-green-200 hover:text-white">+267 73602694</a> | <a href="mailto:support@btc.bw" class="text-green-200 hover:text-white">keoagiler@btc.bw</a></p>
+        <p>Contact:© 2025 Botswana Telecommunications Corporation. All rights reserved.</p>
+        <p>itdevelopment@btc.bw</p>
     </footer>
 
     <!-- Snackbar element -->
@@ -255,17 +255,17 @@
 
         function showSnackbar(message) {
             var snackbar = document.getElementById("snackbar");
-            snackbar.textContent = message; // Set the message in the snackbar
+            snackbar.textContent = message;
             snackbar.className = "show";
             setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000);
         }
-    k
+
         function getCookie(name) {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
             if (parts.length === 2) return parts.pop().split(';').shift();
         }
-    
+
         window.onload = function() {
             const loginError = getCookie('loginError');
             if (loginError) {
