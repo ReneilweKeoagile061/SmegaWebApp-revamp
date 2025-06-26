@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motlakase Dashboard - Electricity Transactions</title>
+    <link rel="icon" href="../../resoures/BTC Smega Logo 1.png" type="image/png">
+    <link rel="stylesheet" href="../css/output.css">
+    <style>
+        body {
+            background-color: #f5f7f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-container { flex: 1; }
+        .search-card {
+            background-color: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            transition: all 0.2s ease-in-out;
+        }
+        .search-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .search-form-bg {
+            background-color: rgba(35, 168, 74, 0.03);
+            border-radius: 0 0 0.75rem 0.75rem;
+        }
+        .input-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #23A84A;
+            z-index: 2;
+        }
+        .form-input {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #23A84A;
+            box-shadow: 0 0 0 2px rgba(35, 168, 74, 0.2);
+        }
+        .form-input::placeholder {
+            text-align: left;
+            color: #9ca3af;
+        }
+        .search-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #23A84A;
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .search-btn:hover {
+            background-color: #096b28;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .transaction-table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+        }
+        .transaction-table th, .transaction-table td {
+            padding: 0.75rem 1rem;
+            white-space: nowrap;
+        }
+        .transaction-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f8fafc;
+            z-index: 10;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            background: #e5e7eb;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #23A84A;
+            border-radius: 4px;
+        }
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #23A84A #e5e7eb;
+        }
+        .electricity-icon {
+            width: 40px;
+            height: 40px;
+            color: #fbbf24;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.25s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-green-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <img src="../../resoures/Smega.png" alt="Motlakase Logo" class="h-12 w-auto rounded-md border-2 border-white" />
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">
+                        Motlakase Transactions
+                        <span class="ml-2 inline-flex items-center rounded-md bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-800/20">
+                            
+                        </span>
+                    </h1>
+                    <p class="text-xs text-green-200 hidden sm:block">
+                        Botswana Telecommunications Corporation
+                    </p>
+                </div>
+            </div>
+            <nav class="hidden lg:flex items-center space-x-6">
+                <a href="/pages/home.html" class="hover:text-green-200 transition-colors duration-200 flex items-center space-x-1.5 px-3 py-2 rounded-md hover:bg-green-700/50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <span>Statements</span>
+                </a>
+                <a href="/" class="hover:text-red-200 transition-colors duration-200 flex items-center space-x-1.5 px-3 py-2 rounded-md hover:bg-green-700/50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+    <main class="main-container container mx-auto px-4 py-6">
+        <div class="search-card overflow-hidden mb-6">
+            <div class="p-4 md:p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800">Electricity Transaction Search</h2>
+                <p class="text-gray-600 mt-1 text-sm">Retrieve electricity transactions by meter number and period.</p>
+            </div>
+            <div class="p-4 md:p-6 search-form-bg">
+                <div id="message" class="hidden text-red-600 mb-2"></div>
+                <div class="flex items-center mb-4">
+                    <div class="bg-yellow-700/10 p-1.5 rounded-md"> <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 ml-2">Search Criteria</h3>
+                </div>
+                <form id="electricity-search-form" class="space-y-4" autocomplete="off" novalidate>
+                    <div class="bg-white p-4 rounded-md shadow-sm">
+                        <label for="meterNumber" class="block text-xs font-medium text-gray-700 mb-1">Meter Number</label>
+                        <div class="relative">
+                            <div class="input-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <input type="text" id="meterNumber" name="meterNumber" class="form-input" placeholder="e.g., 0123456789" required pattern="[0-9]{6,11}" maxlength="11" minlength="6" inputmode="numeric">
+                        </div>
+                        <div id="meter-error" class="text-red-600 text-sm font-medium hidden mt-1">Please enter a valid meter number (6-11 digits).</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-md shadow-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Period</label>
+                                <div>
+                                    <label for="startDate" class="block text-xs text-gray-500 mb-1">From</label>
+                                    <div class="relative">
+                                        <div class="input-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <input type="date" name="startDate" id="startDate" class="form-input" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1 opacity-0 md:block hidden">Period</label>
+                                <div>
+                                    <label for="endDate" class="block text-xs text-gray-500 mb-1">To</label>
+                                    <div class="relative">
+                                        <div class="input-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <input type="date" name="endDate" id="endDate" class="form-input" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center pt-2">
+                        <button type="submit" id="searchButton" class="search-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            SEARCH
+                        </button>
+                        <div id="spinner" class="hidden w-5 h-5 ml-3 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
+                        <div id="message" class="hidden ml-3 text-red-500 text-sm"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="transaction-results-section" class="search-card mt-6 p-4 md:p-6 hidden">
+            <div class="flex items-center mb-4">
+                <div class="bg-green-700/10 p-1.5 rounded-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-2">Transaction History</h3>
+            </div>
+            <div id="transaction-table-container" class="transaction-table-container custom-scrollbar">
+                <table class="min-w-full divide-y divide-gray-200 transaction-table">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Meter Number</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount (BWP)</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units (kWh)</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Token</th>
+                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-table-body" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                           <td colspan="6" class="text-center py-10 text-gray-500" id="no-transactions-message">
+                                No electricity transactions to display. Perform a search to see results.
+                           </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="search-card mt-6 p-4 md:p-6">
+            <div class="flex items-center mb-4">
+                <div class="bg-green-700/10 p-1.5 rounded-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-2">How It Works</h3>
+            </div>
+            <div class="space-y-4">
+                <!-- Searching for Transactions -->
+                <div class="bg-green-50/50 p-3 rounded-lg border border-green-200">
+                    <h4 class="text-sm font-semibold text-green-800 mb-1.5 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        Searching for Transactions
+                    </h4>
+                    <ul class="list-disc list-inside text-gray-700 text-sm space-y-1 pl-2">
+                        <li><strong>Meter Number:</strong> Enter the meter number for which you want to retrieve transactions.</li>
+                        <li><strong>Period:</strong> Select the "Start Date" and "End Date" to define the transaction period.</li>
+                        <li><strong>Search Button:</strong> Click the "Search" button. The system will then retrieve the transaction data for the specified meter number and period.</li>
+                    </ul>
+                </div>
+                <!-- Viewing Details -->
+                <div class="bg-green-50/50 p-3 rounded-lg border border-green-200">
+                    <h4 class="text-sm font-semibold text-green-800 mb-1.5 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Viewing Details
+                    </h4>
+                    <ul class="list-disc list-inside text-gray-700 text-sm space-y-1 pl-2">
+                        <li><strong>View Details:</strong> Click the "View Details" button in the table to see more information about a transaction.</li>
+                        <li><strong>Scroll:</strong> Use the scroll bar to view all results if there are many transactions.</li>
+                    </ul>
+                </div>
+                <!-- General Tips -->
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <h4 class="text-sm font-semibold text-gray-700 mb-1.5 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20.5c4.142 0 7.5-3.358 7.5-7.5s-3.358-7.5-7.5-7.5-7.5 3.358-7.5 7.5 3.358 7.5 7.5 7.5z"/>
+                        </svg>
+                        General Tips
+                    </h4>
+                    <ul class="list-disc list-inside text-gray-600 text-sm space-y-1 pl-2">
+                        <li><strong>Accurate Information:</strong> Ensure the meter number and date range are correct to get the desired transactions.</li>
+                        <li><strong>Session Security:</strong> Your session is secure. Always remember to log out when you are finished using the portal.</li>
+                        <li><strong>No Results:</strong> If no data is found for the criteria, a message will appear in the table area.</li>
+                    </ul>
+                </div>
+                <div class="text-xs text-gray-400">
+                    For help, contact <a href="mailto:itdevelopment@btc.bw" class="text-green-700 underline">itdevelopment@btc.bw</a>.
+                </div>
+            </div>
+        </div>
+        <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.25s ease;
+        }
+        </style>
+
+        <script>
+        // Utility: getCookie
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set last activity time
+            const lastActivityElement = document.getElementById('last-activity');
+            if (lastActivityElement) {
+                lastActivityElement.textContent = new Date().toLocaleTimeString();
+            }
+
+            // Date logic: set min for endDate
+            document.getElementById('startDate').addEventListener('change', function() {
+                document.getElementById('endDate').min = this.value;
+                if (!document.getElementById('endDate').value) {
+                    document.getElementById('endDate').value = this.value;
+                }
+            });
+
+            // --- SEARCH LOGIC ---
+            const form = document.getElementById('electricity-search-form');
+            const meterInput = document.getElementById('meterNumber');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const searchBtn = document.getElementById('searchButton');
+            const spinner = document.getElementById('spinner');
+            const message = document.getElementById('message');
+            const meterError = document.getElementById('meter-error');
+            const tableSection = document.getElementById('transaction-results-section');
+            const tableBody = document.getElementById('transaction-table-body');
+            const noTxMsg = document.getElementById('no-transactions-message');
+            const downloadBtn = document.getElementById('downloadButton');
+
+            function validateMeter() {
+                return /^[0-9]{6,11}$/.test(meterInput.value.trim());
+            }
+            function validateDates() {
+                return startDateInput.value && endDateInput.value;
+            }
+            function updateSearchBtnState() {
+                searchBtn.disabled = !(validateMeter() && validateDates());
+            }
+            meterInput.addEventListener('input', function() {
+                meterError.classList.add('hidden');
+                updateSearchBtnState();
+            });
+            startDateInput.addEventListener('input', updateSearchBtnState);
+            endDateInput.addEventListener('input', updateSearchBtnState);
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                message.classList.add('hidden');
+                if (!validateMeter()) {
+                    meterError.classList.remove('hidden');
+                    meterInput.focus();
+                    return;
+                }
+                meterError.classList.add('hidden');
+                searchBtn.disabled = true;
+                spinner.classList.remove('hidden');
+                tableSection.classList.remove('hidden');
+                tableBody.innerHTML = `<tr><td colspan='6' class='text-center py-10 text-gray-500'><div class='animate-spin rounded-full h-8 w-8 border-b-2 border-green-700 mx-auto'></div><p class='mt-2 text-gray-500'>Searching...</p></td></tr>`;
+                noTxMsg.classList.add('hidden');
+                downloadBtn.classList.add('hidden');
+                try {
+                    const response = await fetch(`/api/electricity/transactions?walletNumber=${meterInput.value.trim()}&startDate=${startDateInput.value}&endDate=${endDateInput.value}`);
+                    const data = await response.json();
+                    tableBody.innerHTML = '';
+                    if (response.ok && data.success && data.transactions.length > 0) {
+                        data.transactions.forEach(tx => {
+                            const row = document.createElement('tr');
+                            row.className = 'hover:bg-green-50 animate-fade-in';
+                            row.innerHTML = `
+                                <td class="px-4 py-2 text-sm text-gray-700">${new Date(tx.transaction_date).toLocaleDateString()}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">${tx.meter_no}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">P ${parseFloat(tx.amount).toFixed(2)}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">${tx.receipt?.units || 'N/A'}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700 font-mono">${tx.receipt?.token || 'N/A'}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full ${tx.transfer_status === 'TS' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                        ${tx.transfer_status === 'TS' ? 'Success' : 'Failed'}
+                                    </span>
+                                </td>`;
+                            tableBody.appendChild(row);
+                        });
+                        downloadBtn.classList.remove('hidden');
+                    } else {
+                        tableBody.innerHTML = '';
+                        noTxMsg.classList.remove('hidden');
+                        downloadBtn.classList.add('hidden');
+                    }
+                } catch (error) {
+                    tableBody.innerHTML = '';
+                    noTxMsg.classList.remove('hidden');
+                    noTxMsg.textContent = 'An error occurred while fetching data. Please try again.';
+                    downloadBtn.classList.add('hidden');
+                } finally {
+                    spinner.classList.add('hidden');
+                    searchBtn.disabled = false;
+                }
+            });
+        });
+        </script>
+    </main>
+    <!-- How It Works Section (imitating SMEGA) -->
+    <div id="receipt-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full transform transition-all scale-95 opacity-0 animate-fade-in-up">
+            <div id="receipt-content">
+                <!-- Receipt content will be injected here -->
+            </div>
+            <div class="p-4 bg-gray-50 text-right rounded-b-lg">
+                <button id="close-receipt-modal" class="px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-gray-900 text-white py-4 text-center mt-auto">
+        <p>Contact:© 2025 Botswana Telecommunications Corporation. All rights reserved.</p>
+        <p>itdevelopment@btc.bw</p>
+    </footer>
+</body>
+</html> 
+

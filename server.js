@@ -1,6 +1,7 @@
 import express, { json } from 'express';
 import * as smegRoute from './routes/protected_routes/smega_statement_route.js';
 import * as authRoute from './routes/auth_route.js';
+import * as electricityRoute from './routes/electricity_route.js';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -51,6 +52,7 @@ app.use((req, res, next) => {
 // Routes for protected pages and authentication
 app.use("/smega_statement", smegRoute.router);
 app.use("/auth", authRoute.router);
+app.use("/api/electricity", electricityRoute.router);
 
 // Error handler middleware
 app.use((err, req, res, next) => {
